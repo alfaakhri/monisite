@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "82315983767",
+    "firebase_url": "https://monisite-89178.firebaseio.com",
+    "project_id": "monisite-89178",
+    "storage_bucket": "monisite-89178.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82315983767:android:e61e5467e7b973c4fb22d2",
+        "android_client_info": {
+          "package_name": "com.example.flutter_monisite"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82315983767-jaj8gmq2uft5mo7tb9f3kpf526cm5b5r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqXnToc2zKJuoGhM-oSSzTM3Cpt1F53Ps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82315983767-jaj8gmq2uft5mo7tb9f3kpf526cm5b5r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
