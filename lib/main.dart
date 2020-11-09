@@ -1,51 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_monisite/core/provider/AuthProvider.dart';
-import 'package:flutter_monisite/core/provider/HistoryProvider.dart';
-import 'package:flutter_monisite/core/provider/MonitorProvider.dart';
-import 'package:flutter_monisite/core/provider/NotificationProvider.dart';
-import 'package:flutter_monisite/core/provider/SiteProvider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
+import 'package:flutter_monisite/presentation/screen/root_page.dart';
+import 'package:get/route_manager.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 
-import 'core/routes/router.gr.dart';
+import 'domain/bloc/site_bloc/site_bloc.dart';
+import 'domain/provider/auth_provider.dart';
+import 'domain/provider/history_provider.dart';
+import 'domain/provider/monitor_provider.dart';
+import 'domain/provider/notification_provider.dart';
+import 'domain/provider/site_provider.dart';
+import 'external/color_helpers.dart';
 
 void main() => runApp(MyApp());
-
-Future _showNotificationWithDefaultSound(String title, String message) async {
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
-
-  var androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'channel_id', 'channel_name', 'channel_description',
-      importance: Importance.Max, priority: Priority.High);
-  var iOSPlatformChannelSpecifics = IOSNotificationDetails();
-  var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-  await flutterLocalNotificationsPlugin.show(
-    0,
-    '$title',
-    '$message',
-    platformChannelSpecifics,
-    payload: 'Default_Sound',
-  );
-}
-
-Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
-  if (message['data'] != null) {
-    final data = message['data'];
-
-    final title = data['title'];
-    final body = data['message'];
-
-    await _showNotificationWithDefaultSound(
-        "Notification", "Lorem ipsum sir dolar amet");
-    // var value = data['value'].toString().split(new RegExp(r'"\"*'));
-    print(data['value']);
-    // print(value);
-  }
-  return Future<void>.value();
-}
 
 class MyApp extends StatelessWidget {
   @override
@@ -59,17 +29,27 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => MonitorProvider(),
         ),
-        ChangeNotifierProvider(create: (_) => NotificationProvider(),),
-        ChangeNotifierProvider(create: (_) => HistoryProvider(),),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+        ChangeNotifierProvider(
+          create: (_) => NotificationProvider(),
         ),
-        initialRoute: Router.initialPage,
-        onGenerateRoute: Router.onGenerateRoute,
-        navigatorKey: Router.navigatorKey,
+        ChangeNotifierProvider(
+          create: (_) => HistoryProvider(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthBloc>(create: (context) => AuthBloc()),
+          BlocProvider<SiteBloc>(create: (context) => SiteBloc()),
+        ],
+        child: GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            fontFamily: GoogleFonts.poppins().fontFamily
+          ),
+          initialRoute: '/root',
+          getPages: [GetPage(name: '/root', page: () => RootPage())],
+        ),
       ),
     );
   }

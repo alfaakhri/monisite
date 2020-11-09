@@ -1,0 +1,194 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_monisite/core/components/Failure.dart';
+import 'package:flutter_monisite/data/models/Site.dart';
+import 'dart:io';
+
+const BASE_URL = "https://api.toragasolusi.com";
+
+class ApiService {
+  String clusterName = "Bekasi";
+  final JsonDecoder _decoder = new JsonDecoder();
+  Dio _dio = Dio();
+  Response response;
+
+  Future<List<Site>> getSites(String token) async {
+    final response = await _dio.get(
+        BASE_URL + "/api/v1/cluster?cluster=$clusterName",
+        options: Options(headers: {"Authorization": "Bearer $token"}));
+    if (response.statusCode == 200) {
+      print(response.statusCode);
+      return siteFromJson(response.data);
+    } else {
+      return null;
+    }
+  }
+
+  Future<Response> getSitesNew(String token) async {
+    try {
+      final response = await _dio.get(
+          BASE_URL + "/api/v1/cluster?cluster=$clusterName",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  Future<dynamic> fetchMonitor(String id, String token) async {
+    try {
+      final responseBody = await _dio
+          .get(BASE_URL + "/api/v1/monitor?id=$id",
+              options: Options(headers: {"Authorization": "Bearer $token"}))
+          .then((response) {
+        final String res = response.data;
+        final int statusCode = response.statusCode;
+
+        print("res: " + res + " statusCode: " + statusCode.toString());
+        if (statusCode < 200 || statusCode > 400 || json == null) {
+          throw new Failure("Error while fetching data");
+        }
+        return _decoder.convert(res);
+      });
+      // final responseBody = await http.get(BASE_URL);
+      return responseBody;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<dynamic> getSiteById(String id, String token) async {
+    try {
+      final responseBody = await _dio
+          .get(BASE_URL + "/api/v1/site?cluster=jakarta",
+              options: Options(headers: {"Authorization": "Bearer $token"}))
+          .then((response) {
+        final String res = response.data;
+        final int statusCode = response.statusCode;
+
+        print("res: " + res + " statusCode: " + statusCode.toString());
+        if (statusCode < 200 || statusCode > 400 || json == null) {
+          throw new Failure("Error while fetching data");
+        }
+        return _decoder.convert(res);
+      });
+      // final responseBody = await http.get(BASE_URL);
+      return responseBody;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<Response> getSiteByIDNew(String id, String token) async {
+    try {
+      final response = await _dio.get(BASE_URL + "/api/v1/site?cluster=jakarta",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } catch (e) {
+      return e;
+    }
+  }
+
+  Future<Response> postLogin(String email, String password) async {
+    try {
+      response = await _dio.post(BASE_URL + "/api/v1/login",
+          data: {"email": email, "password": password, "role": 1});
+
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<Response> getAuthentication(String token) async {
+    try {
+      response = await _dio.get(BASE_URL + "/api/v1/profile",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> postSignUp(dynamic data) async {
+    try {
+      response = await _dio.post(BASE_URL + "/api/v1/register", data: data);
+
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 422) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<dynamic> getHistoryProccess() {
+    try {
+      // final responseBody = await http
+      //     .get(BASE_URL + "/sensor/index_get?id=$id")
+      //     .then((http.Response response) {
+      //   final String res = response.body;
+      //   final int statusCode = response.statusCode;
+
+      //   print("res: " + res + " statusCode: " + statusCode.toString());
+      //   if (statusCode < 200 || statusCode > 400 || json == null) {
+      //     throw new Failure("Error while fetching data");
+      //   }
+      //   return _decoder.convert(res);
+      // });
+      // return responseBody;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<dynamic> getHistoryFinished() {
+    try {
+      // final responseBody = await http
+      //     .get(BASE_URL + "/sensor/index_get?id=$id")
+      //     .then((http.Response response) {
+      //   final String res = response.body;
+      //   final int statusCode = response.statusCode;
+
+      //   print("res: " + res + " statusCode: " + statusCode.toString());
+      //   if (statusCode < 200 || statusCode > 400 || json == null) {
+      //     throw new Failure("Error while fetching data");
+      //   }
+      //   return _decoder.convert(res);
+      // });
+      // return responseBody;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<dynamic> acceptNotification() {
+    try {
+      // final responseBody = await http
+      //     .get(BASE_URL + "/sensor/index_get?id=$id")
+      //     .then((http.Response response) {
+      //   final String res = response.body;
+      //   final int statusCode = response.statusCode;
+
+      //   print("res: " + res + " statusCode: " + statusCode.toString());
+      //   if (statusCode < 200 || statusCode > 400 || json == null) {
+      //     throw new Failure("Error while fetching data");
+      //   }
+      //   return _decoder.convert(res);
+      // });
+      // return responseBody;
+    } catch (e) {
+      throw e;
+    }
+  }
+}
