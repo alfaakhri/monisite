@@ -47,13 +47,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       try {
         _token = await _sharedPreferenceService.getToken();
+        print("TOKEN $_token");
         if (_token == null) {
           yield GetAuthFailed("Login terlebih dahulu");
         } else {
           var response = await _apiService.getAuthentication(_token);
           if (response.statusCode == 200) {
             _profileModel = ProfileModel.fromJson(response.data);
-            yield GetAuthSuccess();
+            yield GetAuthSuccess(_profileModel);
           } else if (response.statusCode == 401) {
             yield GetAuthMustLogin();
           } else {
@@ -79,10 +80,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield DoLoginFailed(e.toString());
       }
     } else if (event is DoLogout) {
-      _sharedPreferenceService.deleteTokenModel();
-      _profileModel = null;
-      _tokenModel = null;
-      yield DoLogoutSuccess();
+      var response = await _apiService.getLogout(token);
+      if (response.statusCode == 200) {
+        _sharedPreferenceService.deleteTokenModel();
+        _token = null;
+        yield DoLogoutSuccess();
+      } else {
+        yield DoLogoutFailed();
+      }
     } else if (event is PostSignup) {
       yield PostSignupLoading();
 
@@ -105,7 +110,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else if (response.statusCode == 422) {
           RegistrationResponse registration =
               RegistrationResponse.fromJson(response.data);
-          yield PostSignupFailed(registration.email.first);    
+          yield PostSignupFailed(registration.email.first);
         } else {
           yield PostSignupFailed("Something wrong, please try again.");
         }

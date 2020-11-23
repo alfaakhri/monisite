@@ -8,12 +8,14 @@ import 'package:flutter_monisite/external/color_helpers.dart';
 import 'account/account_screen.dart' as account;
 import 'history/history_screen.dart' as history;
 import 'home/home_screen.dart' as home;
+import 'home/search_site_screen.dart';
 import 'report/report_screen.dart' as report;
 import 'notification/notification_screen.dart' as notification;
 
 class NavBottomMain extends StatefulWidget {
-  static const String id = "nav_bottom_main";
+  final int indexPage;
 
+  const NavBottomMain({Key key, this.indexPage}) : super(key: key);
   @override
   _NavBottomMainState createState() => _NavBottomMainState();
 }
@@ -28,10 +30,19 @@ class _NavBottomMainState extends State<NavBottomMain>
 
   static List<Widget> _widgetOptions = <Widget>[
     new home.HomeScreen(),
+    // SearchSiteScreen(),
     new history.HistoryScreen(),
     new notification.NotificationScreen(),
     new account.AccountScreen(),
   ];
+
+  @override
+  void initState() { 
+    super.initState();
+    if (widget.indexPage != null) {
+      _page = widget.indexPage;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/constants.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 
@@ -16,40 +17,45 @@ class ContainerSensor extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade400,
-        borderRadius: new BorderRadius.circular(20.0),
+        color: ColorHelpers.colorWhite,
+        borderRadius: new BorderRadius.circular(15.0),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      padding: EdgeInsets.all(20),
       child: Row(
         children: <Widget>[
           Row(
             children: <Widget>[
               Container(
-                width: 190,
+                width: 220,
                 child: Row(
                   children: <Widget>[
                     Icon(
                       iconData,
-                      size: 28,
+                      size: 35,
+                      color: Colors.blue,
                     ),
-                    UIHelper.horizontalSpaceVerySmall,
-                    Text(
-                      title,
-                      style: TextStyle(fontSize: Constants.sizeFontSensor),
+                    UIHelper.horizontalSpaceSmall,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          unit,
+                          style: TextStyle(color: Colors.grey),
+                        )
+                      ],
                     ),
                   ],
                 ),
               ),
               Container(
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      data,
-                      style: TextStyle(fontSize: 24),
-                    ),
-                    UIHelper.horizontalSpaceVerySmall,
-                    Text(unit),
-                  ],
+                child: Text(
+                  data,
+                  style: TextStyle(fontSize: 18),
                 ),
               ),
             ],

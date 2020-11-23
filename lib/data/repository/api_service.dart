@@ -4,8 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_monisite/core/components/Failure.dart';
-import 'package:flutter_monisite/data/models/Site.dart';
 import 'dart:io';
+
+import 'package:flutter_monisite/data/models/site/site.dart';
 
 const BASE_URL = "https://api.toragasolusi.com";
 
@@ -15,26 +16,33 @@ class ApiService {
   Dio _dio = Dio();
   Response response;
 
-  Future<List<Site>> getSites(String token) async {
-    final response = await _dio.get(
-        BASE_URL + "/api/v1/cluster?cluster=$clusterName",
-        options: Options(headers: {"Authorization": "Bearer $token"}));
-    if (response.statusCode == 200) {
-      print(response.statusCode);
-      return siteFromJson(response.data);
-    } else {
-      return null;
+  Future<Response> getSitesNew(String token) async {
+    print("TOKEN $token");
+    try {
+      final response = await _dio.get(BASE_URL + "/api/v1/site",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
     }
   }
 
-  Future<Response> getSitesNew(String token) async {
+  Future<Response> getSitesBySearch(String result, String token) async {
+    print("TOKEN $token");
     try {
-      final response = await _dio.get(
-          BASE_URL + "/api/v1/cluster?cluster=$clusterName",
+      final response = await _dio.get(BASE_URL + "/api/v1/site?search=$result",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
-    } catch (e) {
-      return e;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -60,35 +68,33 @@ class ApiService {
     }
   }
 
-  Future<dynamic> getSiteById(String id, String token) async {
+  Future<Response> getSiteByID(int id, String token) async {
     try {
-      final responseBody = await _dio
-          .get(BASE_URL + "/api/v1/site?cluster=jakarta",
-              options: Options(headers: {"Authorization": "Bearer $token"}))
-          .then((response) {
-        final String res = response.data;
-        final int statusCode = response.statusCode;
-
-        print("res: " + res + " statusCode: " + statusCode.toString());
-        if (statusCode < 200 || statusCode > 400 || json == null) {
-          throw new Failure("Error while fetching data");
-        }
-        return _decoder.convert(res);
-      });
-      // final responseBody = await http.get(BASE_URL);
-      return responseBody;
-    } catch (e) {
-      throw e;
+      final response = await _dio.get(
+          BASE_URL + "/api/v1/monitor?site_id=$id&last=true",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
     }
   }
 
-  Future<Response> getSiteByIDNew(String id, String token) async {
+  Future<Response> getReportMonitor(int id, String token) async {
     try {
-      final response = await _dio.get(BASE_URL + "/api/v1/site?cluster=jakarta",
+      final response = await _dio.get(
+          BASE_URL + "/api/v1/monitor?site_id=$id",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
-    } catch (e) {
-      return e;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -106,6 +112,21 @@ class ApiService {
   Future<Response> getAuthentication(String token) async {
     try {
       response = await _dio.get(BASE_URL + "/api/v1/profile",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> getLogout(String token) async {
+    try {
+      response = await _dio.post(BASE_URL + "/api/v1/logout",
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
       return response;

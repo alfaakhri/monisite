@@ -7,7 +7,11 @@ class AuthInitial extends AuthState {}
 
 class GetAuthLoading extends AuthState {}
 
-class GetAuthSuccess extends AuthState {}
+class GetAuthSuccess extends AuthState {
+  final ProfileModel profileModel;
+
+  GetAuthSuccess(this.profileModel);
+}
 
 class GetAuthFailed extends AuthState {
   final String message;
