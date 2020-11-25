@@ -26,3 +26,13 @@ class PostSignup extends AuthEvent {
 }
 
 class StartApp extends AuthEvent {}
+
+class EditProfile extends AuthEvent {
+  final int idUser;
+  final String nama;
+  final String email;
+  final String phonNumber;
+  final String address;
+
+  EditProfile(this.idUser, this.nama, this.email, this.phonNumber, this.address);
+}

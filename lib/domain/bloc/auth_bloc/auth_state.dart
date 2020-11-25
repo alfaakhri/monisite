@@ -44,3 +44,20 @@ class PostSignupFailed extends AuthState {
 
   PostSignupFailed(this.message);
 }
+
+class AddTokenSuccess extends AuthState {}
+
+class AddTokenFailed extends AuthState {}
+
+class EditProfileLoading extends AuthState {}
+
+class EditProfileSuccess extends AuthState {
+  final ProfileModel profileModel;
+
+  EditProfileSuccess(this.profileModel);
+}
+
+class EditProfileFailed extends AuthState {
+  final String message;
+  EditProfileFailed(this.message);
+}

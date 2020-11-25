@@ -67,7 +67,6 @@ class _SignUpPageState extends State<SignUpPage> {
         } else if (state is PostSignupSuccess) {
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
           Fluttertoast.showToast(msg: "Registration Success!");
-
           Get.offAll(NavBottomMain());
         } else if (state is PostSignupFailed) {
           Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();

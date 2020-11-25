@@ -32,4 +32,10 @@ class FirebaseService implements BaseFirebase {
   Future<void> signOut() async {
     return _firebaseAuth.signOut();
   }
+
+  Future<String> getToken() async{
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    String token = await _firebaseMessaging.getToken();
+    return token;
+  }
 }

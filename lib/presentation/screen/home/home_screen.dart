@@ -4,6 +4,7 @@ import 'package:flutter_monisite/data/models/site/list_sites_model.dart';
 import 'package:flutter_monisite/data/models/site/site.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/domain/bloc/site_bloc/site_bloc.dart';
+import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/domain/provider/site_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+    Provider.of<AuthProvider>(context, listen: false).getToken();
     siteBloc = BlocProvider.of<SiteBloc>(context);
     siteBloc.add(GetSites());
     super.initState();

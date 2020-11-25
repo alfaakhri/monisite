@@ -32,6 +32,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _token = token;
   }
 
+  String _tokenFirebase;
+  String get tokenFirebase => _tokenFirebase;
+  void setTokenFirebase(String tokenFirebase) {
+    _tokenFirebase = tokenFirebase;
+  }
+
   ProfileModel _profileModel = ProfileModel();
   ProfileModel get profileModel => _profileModel;
   void setProfileModel(ProfileModel profileModel) {
@@ -53,6 +59,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           var response = await _apiService.getAuthentication(_token);
           if (response.statusCode == 200) {
+            _tokenFirebase = await _firebaseService.getToken();
+            print("TOKEN FIREBASE $_tokenFirebase");
+            var responseToken =
+                await _apiService.addTokenFirebase(_token, _tokenFirebase);
             _profileModel = ProfileModel.fromJson(response.data);
             yield GetAuthSuccess(_profileModel);
           } else if (response.statusCode == 401) {
@@ -71,8 +81,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         var response = await _apiService.postLogin(event.email, event.password);
         if (response.statusCode == 200) {
           _tokenModel = TokenModel.fromJson(response.data);
-          _sharedPreferenceService.saveToken(_tokenModel.token);
-          yield DoLoginSuccess();
+          if (_tokenModel.success == false) {
+            yield DoLoginFailed("Email atau password salah");
+          } else {
+            _sharedPreferenceService.saveToken(_tokenModel.token);
+            _tokenFirebase = await _firebaseService.getToken();
+            print("TOKEN FIREBASE $_tokenFirebase");
+            var responseToken = await _apiService.addTokenFirebase(
+                _tokenModel.token, _tokenFirebase);
+            yield DoLoginSuccess();
+          }
         } else {
           yield DoLoginFailed("");
         }
@@ -106,6 +124,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           RegistrationResponse registration =
               RegistrationResponse.fromJson(response.data);
           _sharedPreferenceService.saveToken(registration.token);
+          _tokenFirebase = await _firebaseService.getToken();
+          print("TOKEN FIREBASE $_tokenFirebase");
+          var responseToken = await _apiService.addTokenFirebase(
+              registration.token, _tokenFirebase);
           yield PostSignupSuccess();
         } else if (response.statusCode == 422) {
           RegistrationResponse registration =
@@ -119,6 +141,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } else if (event is StartApp) {
       yield* _startAppToState();
+    } else if (event is EditProfile) {
+      yield EditProfileLoading();
+
+      try {
+        var data = {
+          'name': event.nama,
+          'email': event.email,
+          'phone_number': event.phonNumber,
+          'address': event.address
+        };
+        var response = await _apiService.updateUser(json.encode(data), token, event.idUser);
+        if (response.statusCode == 200) {
+          if (response.data['success'] == true) {
+            var response = await _apiService.getAuthentication(_token);
+            if (response.statusCode == 200) {
+              _tokenFirebase = await _firebaseService.getToken();
+              print("TOKEN FIREBASE $_tokenFirebase");
+              var responseToken =
+                  await _apiService.addTokenFirebase(_token, _tokenFirebase);
+              _profileModel = ProfileModel.fromJson(response.data);
+              yield EditProfileSuccess(_profileModel);
+            } else if (response.statusCode == 401) {
+              yield GetAuthMustLogin();
+            } else {
+              yield GetAuthFailed("Login terlebih dahulu");
+            }
+          } else {
+            yield EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)");
+          }
+        } else {
+          yield EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)");
+        }
+      } catch (e) {
+        yield EditProfileFailed(e.toString());
+      }
     }
   }
 

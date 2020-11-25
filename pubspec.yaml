@@ -9,8 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  auto_route: ^0.2.1
-  cloud_firestore: ^0.13.0+1
   cupertino_icons: ^0.1.2
   curved_navigation_bar: ^0.3.4
   dio: ^3.0.10
@@ -33,7 +31,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  build_runner: ^1.7.3
 
 flutter_icons:
   android: "launcher_icon"
@@ -49,6 +46,8 @@ flutter:
     - images/Said.jpg
     - images/tower.png
     - images/laptop.png
+    - images/user.png
+    - images/icon_edit.png
 
   fonts:
     - family: Pacifico

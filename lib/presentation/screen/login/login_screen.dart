@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
+import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/screen/login/signup_screen.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_monisite/presentation/widgets/loading_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -37,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+    Provider.of<AuthProvider>(context, listen: false).getToken();
     super.initState();
     authBloc = BlocProvider.of<AuthBloc>(context);
   }
@@ -51,7 +54,6 @@ class _LoginScreenState extends State<LoginScreen> {
         listener: (context, state) {
           if (state is DoLoginSuccess) {
             Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-
             Get.offAll(NavBottomMain());
           } else if (state is DoLoginLoading) {
             LoadingWidget.showLoadingDialog(context, _keyLoader);
