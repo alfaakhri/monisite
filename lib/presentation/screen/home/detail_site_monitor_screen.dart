@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeleton_text/skeleton_text.dart';
+import 'package:intl/intl.dart';
 
 import 'map_screen.dart';
 
@@ -66,53 +67,62 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorHelpers.colorBackground,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        elevation: 0.0,
-        leading: IconButton(
-          onPressed: () {
-            siteBloc.add(GetSites());
-            Get.back();
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.white,
+    return WillPopScope(
+      onWillPop: () {
+        siteBloc.add(GetSites());
+        //trigger leaving and use own data
+        Get.back();
+        //we need to return a future
+        return Future.value(false);
+      },
+      child: Scaffold(
+        backgroundColor: ColorHelpers.colorBackground,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.blue,
+          elevation: 0.0,
+          leading: IconButton(
+            onPressed: () {
+              siteBloc.add(GetSites());
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back,
+              color: Colors.white,
+            ),
           ),
         ),
-      ),
-      body: SafeArea(
-        child: SmartRefresher(
-          controller: _refreshController,
-          enablePullUp: false,
-          child: buildCtn(),
-          footer: ClassicFooter(
-            loadStyle: LoadStyle.ShowWhenLoading,
-            completeDuration: Duration(milliseconds: 500),
-          ),
-          header: WaterDropMaterialHeader(
-              backgroundColor: Colors.white.withOpacity(0.8),
-              color: Colors.blue),
-          onRefresh: () async {
-            //monitor fetch data from network
-            await Future.delayed(Duration(milliseconds: 1000));
+        body: SafeArea(
+          child: SmartRefresher(
+            controller: _refreshController,
+            enablePullUp: false,
+            child: buildCtn(),
+            footer: ClassicFooter(
+              loadStyle: LoadStyle.ShowWhenLoading,
+              completeDuration: Duration(milliseconds: 500),
+            ),
+            header: WaterDropMaterialHeader(
+                backgroundColor: Colors.white.withOpacity(0.8),
+                color: Colors.blue),
+            onRefresh: () async {
+              //monitor fetch data from network
+              await Future.delayed(Duration(milliseconds: 1000));
 
-            siteBloc.add(GetSiteByID(widget.siteID));
+              siteBloc.add(GetSiteByID(widget.siteID));
 
-            if (mounted) setState(() {});
-            _refreshController.refreshCompleted();
-          },
-          onLoading: () async {
-            //monitor fetch data from network
-            await Future.delayed(Duration(milliseconds: 1000));
+              if (mounted) setState(() {});
+              _refreshController.refreshCompleted();
+            },
+            onLoading: () async {
+              //monitor fetch data from network
+              await Future.delayed(Duration(milliseconds: 1000));
 //        for (int i = 0; i < 10; i++) {
 //          data.add("Item $i");
 //        }
-            if (mounted) setState(() {});
-            _refreshController.loadFailed();
-          },
+              if (mounted) setState(() {});
+              _refreshController.loadFailed();
+            },
+          ),
         ),
       ),
     );
@@ -340,6 +350,18 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Icon(Icons.access_time,
+                                  color: Colors.white, size: 20),
+                              UIHelper.horizontalSpaceVerySmall,
+                              Container(
+                                  child: Text("Waktu Terbaru: ${DateTime.parse(monitor.data.createdAt).toLocal().toString().split(".")[0]}",
+                                      style: TextStyle(color: Colors.white))),
+                            ],
+                          ),
+                          UIHelper.verticalSpaceVerySmall,
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Icon(Icons.text_snippet,
                                   color: Colors.white, size: 20),
                               UIHelper.horizontalSpaceVerySmall,
@@ -421,7 +443,8 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(ReportScreen());
+                                      Get.to(ReportScreen(
+                                          siteId: monitor.data.siteId));
                                     },
                                     child: CircleAvatar(
                                       backgroundColor:

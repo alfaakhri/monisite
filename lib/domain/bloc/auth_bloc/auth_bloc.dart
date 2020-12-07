@@ -1,13 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_monisite/data/models/profile_model.dart';
 import 'package:flutter_monisite/data/models/registration_model.dart';
 import 'package:flutter_monisite/data/models/registration_response.dart';
 import 'package:flutter_monisite/data/models/token_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/external/service/firebase_service.dart';
+import 'package:flutter_monisite/external/service/image_picker_service.dart';
 import 'package:flutter_monisite/external/service/shared_preference_service.dart';
 import 'package:meta/meta.dart';
 
@@ -151,7 +154,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           'phone_number': event.phonNumber,
           'address': event.address
         };
-        var response = await _apiService.updateUser(json.encode(data), token, event.idUser);
+        var response = await _apiService.updateUser(
+            json.encode(data), token, event.idUser);
         if (response.statusCode == 200) {
           if (response.data['success'] == true) {
             var response = await _apiService.getAuthentication(_token);
@@ -175,6 +179,39 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         yield EditProfileFailed(e.toString());
+      }
+    } else if (event is EditPhotoProfile) {
+      var image =
+          await ImagePickerService().dialogImageEditProfil(event.context);
+
+      File _image = image;
+      print('Image Path $_image');
+
+      if (_image != null) {
+        print("Ukuran : " + _image.lengthSync().toString());
+        if (_image.lengthSync() >= 5000000) {
+          yield EditPhotoProfileMaxSize();
+        }
+        try {
+          var response = await _apiService.updatePhotoProfile(token, _image);
+          if (response.statusCode == 200) {
+            var responseAuth = await _apiService.getAuthentication(_token);
+            if (responseAuth.statusCode == 200) {
+              _profileModel = ProfileModel.fromJson(responseAuth.data);
+              yield EditProfileSuccess(_profileModel);
+            } else if (responseAuth.statusCode == 401) {
+              yield GetAuthMustLogin();
+            } else {
+              yield GetAuthFailed("Login terlebih dahulu");
+            }
+          } else {
+            yield EditPhotoProfileFailed("Failed update photo profile");
+          }
+        } catch (e) {
+          yield EditPhotoProfileFailed(e.toString());
+        }
+      } else {
+        yield EditPhotoProfileCancel();
       }
     }
   }

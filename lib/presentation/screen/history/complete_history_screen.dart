@@ -19,6 +19,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return Container();
   //   return FutureBuilder(
   //     future: apiService.getSites("1"),
   //     builder: (BuildContext context, AsyncSnapshot<List<Site>> snapshot) {

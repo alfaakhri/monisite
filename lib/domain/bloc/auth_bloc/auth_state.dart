@@ -61,3 +61,18 @@ class EditProfileFailed extends AuthState {
   final String message;
   EditProfileFailed(this.message);
 }
+
+class EditPhotoProfileLoading extends AuthState {}
+class EditPhotoProfileSuccess extends AuthState {
+  final ProfileModel profileModel;
+
+  EditPhotoProfileSuccess(this.profileModel);
+}
+class EditPhotoProfileCancel extends AuthState {}
+class EditPhotoProfileFailed extends AuthState {
+  final String message;
+
+  EditPhotoProfileFailed(this.message);
+}
+
+class EditPhotoProfileMaxSize extends AuthState {}

@@ -6,12 +6,13 @@ class DatePicker {
   DatePicker({this.selectedDate});
 
   Future selectDate(BuildContext context) async {
+    DateTime _selectedDate = DateTime.now();
+
     final DateTime picked = await showDatePicker(
         context: context,
-        initialDate: selectedDate,
+        initialDate: _selectedDate,
         firstDate: DateTime(2015, 8),
         lastDate: DateTime(2101));
-    if (picked != null && picked != selectedDate)
-        return selectedDate = picked;
+    if (picked != null && picked != selectedDate) return selectedDate = picked;
   }
 }

@@ -4,7 +4,7 @@ import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/presentation/screen/root_page.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'domain/bloc/site_bloc/site_bloc.dart';
@@ -49,6 +49,14 @@ class MyApp extends StatelessWidget {
           ),
           initialRoute: '/root',
           getPages: [GetPage(name: '/root', page: () => RootPage())],
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('id', 'ID'),
+          ],
         ),
       ),
     );

@@ -36,3 +36,9 @@ class EditProfile extends AuthEvent {
 
   EditProfile(this.idUser, this.nama, this.email, this.phonNumber, this.address);
 }
+
+class EditPhotoProfile extends AuthEvent {
+  final BuildContext context;
+
+  EditPhotoProfile(this.context);
+}

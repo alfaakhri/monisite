@@ -7,6 +7,7 @@ import 'package:flutter_monisite/data/models/site/list_sites_model.dart';
 import 'package:flutter_monisite/data/models/site/site_by_id_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/external/service/shared_preference_service.dart';
+import 'package:intl/intl.dart';
 import 'package:meta/meta.dart';
 
 part 'site_event.dart';
@@ -130,10 +131,18 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
         if (token == null) {
           yield SiteMustLogin();
         } else {
-          var response = await _apiService.getReportMonitor(event.siteId, token);
+          DateTime toDate = DateTime.parse(event.fromDate);
+
+          var response = await _apiService.getReportMonitor(
+              event.siteId,
+              event.fromDate,
+              DateFormat('yyyy-MM-dd')
+                  .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
+              token);
           if (response.statusCode == 200) {
             _reportMonitor = ReportMonitorModel.fromJson(response.data);
-            if (_reportMonitor.data == null || _reportMonitor.data.length == 0) {
+            if (_reportMonitor.data == null ||
+                _reportMonitor.data.length == 0) {
               yield GetReportMonitorEmpty();
             } else {
               yield GetReportMonitorSuccess(_reportMonitor);

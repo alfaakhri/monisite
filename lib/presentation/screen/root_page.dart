@@ -22,10 +22,10 @@ Future _showNotificationWithDefaultSound(String title, String message) async {
 
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'channel_id', 'channel_name', 'channel_description',
-      importance: Importance.Max, priority: Priority.High);
+      importance: Importance.max, priority: Priority.high);
   var iOSPlatformChannelSpecifics = IOSNotificationDetails();
   var platformChannelSpecifics = NotificationDetails(
-      androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+      android: androidPlatformChannelSpecifics, iOS: iOSPlatformChannelSpecifics);
   await flutterLocalNotificationsPlugin.show(
     0,
     '$title',
@@ -39,17 +39,17 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
   if (message['data'] != null) {
     final data = message['data'];
 
-    final title = data['key'];
-    final body = jsonDecode(data['value']);
-    final description = body['Description'];
-    final roleID = body['FromRole'];
+    // final title = data['key'];
+    // final body = jsonDecode(data['value']);
+    // final description = body['Description'];
+    // final roleID = body['FromRole'];
 
     await _showNotificationWithDefaultSound(
-        title.toString(), description.toString());
+        "Cek", "Notifikasi");
 
-    print("Description: " + description);
-    print("Body: " + body.toString());
-    print("DataValue: " + data['value'].toString());
+    // print("Description: " + description);
+    // print("Body: " + body.toString());
+    // print("DataValue: " + data['value'].toString());
   }
   return Future<void>.value();
 }
@@ -62,7 +62,6 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   AuthBloc authBloc;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  ItemMessage itemMessage = ItemMessage();
 
   @override
   void initState() {
@@ -78,8 +77,8 @@ class _RootPageState extends State<RootPage> {
     var initializationSettingsIOS = new IOSInitializationSettings(
         onDidReceiveLocalNotification: onDidReceiveLocalNotification);
     var initializationSettings = new InitializationSettings(
-      initializationSettingsAndroid,
-      initializationSettingsIOS,
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsIOS,
     );
     flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onSelectNotification: onSelectNotification);
@@ -87,13 +86,13 @@ class _RootPageState extends State<RootPage> {
     print('Configuring Firebase Messsaging');
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> _message) async {
-        final data = _message['data'];
-        final body = jsonDecode(data['value']);
-        final transaksiID = body['TransaksiID'];
-        final roleID = body['FromRole'];
-        final isNote = body['IsNote'];
+        // final data = _message['data'];
+        // final body = jsonDecode(data['value']);
+        // final transaksiID = body['TransaksiID'];
+        // final roleID = body['FromRole'];
+        // final isNote = body['IsNote'];
 
-        print('TransaksiID: $transaksiID');
+        // print('TransaksiID: $transaksiID');P
         print("onMessage2: $_message");
 
         myBackgroundMessageHandler(_message);

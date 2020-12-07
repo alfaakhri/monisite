@@ -39,6 +39,7 @@ class DataMonitor {
   String arusAc;
   String temperature;
   String pressure;
+  String createdAt;
   String code;
   String siteName;
   String siteType;
@@ -73,6 +74,7 @@ class DataMonitor {
       this.arusAc,
       this.temperature,
       this.pressure,
+      this.createdAt,
       this.code,
       this.siteName,
       this.siteType,
@@ -107,6 +109,7 @@ class DataMonitor {
     arusAc = json['arus_ac'];
     temperature = json['temperature'];
     pressure = json['pressure'];
+    createdAt = json['created_at'];
     code = json['code'];
     siteName = json['site_name'];
     siteType = json['site_type'];
@@ -143,6 +146,7 @@ class DataMonitor {
     data['arus_ac'] = this.arusAc;
     data['temperature'] = this.temperature;
     data['pressure'] = this.pressure;
+    data['created_at'] = this.createdAt;
     data['code'] = this.code;
     data['site_name'] = this.siteName;
     data['site_type'] = this.siteType;

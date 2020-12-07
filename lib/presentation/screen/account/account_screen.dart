@@ -88,6 +88,14 @@ class _AccountScreenState extends State<AccountScreen> {
             _isEdit = false;
 
             Fluttertoast.showToast(msg: "Berhasil memperbarui data profil");
+          } else if (state is EditPhotoProfileSuccess) {
+            Fluttertoast.showToast(msg: "Berhasil memperbarui foto profil");
+          } else if (state is EditPhotoProfileCancel) {
+            Fluttertoast.showToast(msg: "Batal");
+          } else if (state is EditPhotoProfileFailed) {
+            Fluttertoast.showToast(msg: state.message);
+          } else if (state is EditPhotoProfileMaxSize) {
+            Fluttertoast.showToast(msg: "Ukuran file foto melebihi 2 MB");
           }
         },
         builder: (context, state) {
@@ -116,6 +124,26 @@ class _AccountScreenState extends State<AccountScreen> {
             _isEdit = false;
 
             return _contentAccount(state.profileModel);
+          } else if (state is EditPhotoProfileLoading) {
+            return skeletonLoading();
+          } else if (state is EditPhotoProfileSuccess) {
+            _nama.text = state.profileModel.user.name;
+            _telepon.text = state.profileModel.user.phoneNumber;
+            _email.text = state.profileModel.user.email;
+            _alamat.text = state.profileModel.user.address;
+            return _contentAccount(state.profileModel);
+          } else if (state is EditPhotoProfileCancel) {
+            _nama.text = authBloc.profileModel.user.name;
+            _telepon.text = authBloc.profileModel.user.phoneNumber;
+            _email.text = authBloc.profileModel.user.email;
+            _alamat.text = authBloc.profileModel.user.address;
+            return _contentAccount(authBloc.profileModel);
+          } else if (state is EditPhotoProfileFailed) {
+            return ErrorHandlingWidget(
+              icon: 'images/laptop.png',
+              title: "Ada sesuatu yang error",
+              subTitle: "Silahkan kembali beberapa saat lagi.",
+            );
           }
           return Container();
         },
@@ -140,24 +168,25 @@ class _AccountScreenState extends State<AccountScreen> {
                       height: 100,
                       width: 100,
                     )),
-                (_isEdit)
-                    ? Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: InkWell(
-                          onTap: () async {},
-                          child: CircleAvatar(
-                            radius: 10,
-                            backgroundColor: Colors.blue.withOpacity(0.4),
-                            child: Center(
-                                child: Image.asset(
-                              "images/icon_edit.png",
-                              scale: 2.5,
-                            )),
-                          ),
-                        ),
-                      )
-                    : Container()
+                Positioned(
+                  bottom: 0,
+                  right: 10,
+                  child: InkWell(
+                    onTap: () async {
+                      authBloc.add(EditPhotoProfile(context));
+                    },
+                    child: CircleAvatar(
+                      radius: 12,
+                      backgroundColor: Colors.blue,
+                      child: Center(
+                          child: Image.asset(
+                        "images/icon_edit.png",
+                        scale: 2.5,
+                        color: Colors.white,
+                      )),
+                    ),
+                  ),
+                ),
               ],
             ),
             SizedBox(

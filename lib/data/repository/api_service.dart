@@ -7,6 +7,7 @@ import 'package:flutter_monisite/core/components/Failure.dart';
 import 'dart:io';
 
 import 'package:flutter_monisite/data/models/site/site.dart';
+import 'package:uuid/uuid.dart';
 
 const BASE_URL = "https://api.toragasolusi.com";
 
@@ -83,9 +84,9 @@ class ApiService {
     }
   }
 
-  Future<Response> getReportMonitor(int id, String token) async {
+  Future<Response> getReportMonitor(int id, String fromDate, String toDate, String token) async {
     try {
-      final response = await _dio.get(BASE_URL + "/api/v1/monitor?site_id=$id",
+      final response = await _dio.get(BASE_URL + "/api/v1/monitor?site_id=$id&from=$fromDate&to=$toDate",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
@@ -128,6 +129,27 @@ class ApiService {
       response = await _dio.post(BASE_URL + "/api/v1/addToken",
           options: Options(headers: {"Authorization": "Bearer $token"}),
           data: {"token": tokenFirebase});
+
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> updatePhotoProfile(String token, File data) async {
+    try {
+      var filename = '${Uuid().v1()}.jpg';
+      MultipartFile multipartFile =
+          await MultipartFile.fromFile(data.path, filename: filename);
+      FormData formData = FormData.fromMap({"photo": multipartFile});
+
+      response = await _dio.post(BASE_URL + "/api/v1/updatePhoto",
+          options: Options(headers: {"Authorization": "Bearer $token"}),
+          data: formData);
 
       return response;
     } on DioError catch (e) {

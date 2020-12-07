@@ -10,17 +10,20 @@ class ProcessHistoryScreen extends StatefulWidget {
 }
 
 class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
-  List<Site> listSite;
-  ApiService apiService;
+  // List<Site> listSite;
+  // ApiService apiService;
 
   @override
   void initState() {
     super.initState();
-    apiService = ApiService();
+    // apiService = ApiService();
   }
 
   @override
   Widget build(BuildContext context) {
+    return Container();
+  // }
+// }
   //   return FutureBuilder(
   //     future: apiService.getSites("1"),
   //     builder: (BuildContext context, AsyncSnapshot<List<Site>> snapshot) {

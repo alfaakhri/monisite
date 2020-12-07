@@ -19,5 +19,14 @@ class GetSiteBySearch extends SiteEvent {
 
 class GetReportMonitor extends SiteEvent {
   final int siteId;
-  GetReportMonitor(this.siteId);
+  final String fromDate;
+
+  GetReportMonitor(this.siteId, this.fromDate);
+}
+
+class GetListReport extends SiteEvent {
+  final int siteId;
+  final String fromDate;
+
+  GetListReport(this.siteId, this.fromDate);
 }
