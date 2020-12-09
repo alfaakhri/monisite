@@ -84,9 +84,45 @@ class ApiService {
     }
   }
 
-  Future<Response> getReportMonitor(int id, String fromDate, String toDate, String token) async {
+  Future<Response> getReportMonitor(
+      int id, String fromDate, String toDate, String token) async {
     try {
-      final response = await _dio.get(BASE_URL + "/api/v1/monitor?site_id=$id&from=$fromDate&to=$toDate",
+      final response = await _dio.get(
+          BASE_URL +
+              "/api/v1/monitor?site_id=$id&from=$fromDate&to=$toDate&limit=-1",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> getReportListMonitor(int id, String fromDate, String toDate,
+      String token, int pageIndex) async {
+    try {
+      final response = await _dio.get(
+          BASE_URL +
+              "/api/v1/monitor?site_id=$id&from=$fromDate&to=$toDate&limit=10&page=$pageIndex",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> getListNotification(String token) async {
+    try {
+      final response = await _dio.get(
+          BASE_URL +
+              "/api/v1/notification",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {

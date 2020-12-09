@@ -42,10 +42,22 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     _reportMonitor = reportMonitor;
   }
 
+  ReportMonitorModel _listReport = ReportMonitorModel();
+  ReportMonitorModel get listReport => _listReport;
+  void setListReport(List<DataMonitor> listReport) {
+    _listReport.data.addAll(listReport);
+  }
+
   String _status;
   String get status => _status;
   void setStatus(String status) {
     _status = status;
+  }
+
+  String _token;
+  String get token => _token;
+  void setToken(String token) {
+    _token = token;
   }
 
   @override
@@ -55,11 +67,12 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     if (event is GetSites) {
       yield GetSitesLoading();
       try {
-        var token = await _sharedPreferenceService.getToken();
-        if (token == null) {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
           yield SiteMustLogin();
         } else {
-          var response = await _apiService.getSitesNew(token);
+          _token = tokenNew;
+          var response = await _apiService.getSitesNew(_token);
           if (response.statusCode == 200) {
             _listSites = ListSitesModel.fromJson(response.data);
             if (_listSites.data.length == 0 || _listSites.data == null) {
@@ -79,11 +92,13 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     } else if (event is GetSiteByID) {
       yield GetSiteByIDLoading();
       try {
-        var token = await _sharedPreferenceService.getToken();
-        if (token == null) {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
           yield SiteMustLogin();
         } else {
-          var response = await _apiService.getSiteByID(event.siteId, token);
+          _token = tokenNew;
+
+          var response = await _apiService.getSiteByID(event.siteId, _token);
           if (response.statusCode == 200) {
             _dataMonitor = MonitorModel.fromJson(response.data);
             if (_dataMonitor.success) {
@@ -103,12 +118,13 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
       yield GetSiteBySearchLoading();
 
       try {
-        var token = await _sharedPreferenceService.getToken();
-        if (token == null) {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
           yield SiteMustLogin();
         } else {
+          _token = tokenNew;
           var response =
-              await _apiService.getSitesBySearch(event.result, token);
+              await _apiService.getSitesBySearch(event.result, _token);
           if (response.statusCode == 200) {
             _sitesResultSearch = ListSitesModel.fromJson(response.data);
             if (_sitesResultSearch.data == null ||
@@ -127,10 +143,11 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     } else if (event is GetReportMonitor) {
       yield GetReportMonitorLoading();
       try {
-        var token = await _sharedPreferenceService.getToken();
-        if (token == null) {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
           yield SiteMustLogin();
         } else {
+          _token = tokenNew;
           DateTime toDate = DateTime.parse(event.fromDate);
 
           var response = await _apiService.getReportMonitor(
@@ -138,7 +155,7 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
               event.fromDate,
               DateFormat('yyyy-MM-dd')
                   .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
-              token);
+              _token);
           if (response.statusCode == 200) {
             _reportMonitor = ReportMonitorModel.fromJson(response.data);
             if (_reportMonitor.data == null ||
@@ -153,6 +170,45 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
         }
       } catch (e) {
         yield GetReportMonitorFailed(e.toString());
+      }
+    } else if (event is GetListReport) {
+      yield GetListReportLoading();
+      try {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
+          yield SiteMustLogin();
+        } else {
+          _token = tokenNew;
+          DateTime toDate = DateTime.parse(event.fromDate);
+
+          var response = await _apiService.getReportListMonitor(
+              event.siteId,
+              event.fromDate,
+              DateFormat('yyyy-MM-dd')
+                  .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
+              _token,
+              event.pageIndex);
+          if (response.statusCode == 200) {
+            _listReport.data = null;
+            ReportMonitorModel tempList =
+                ReportMonitorModel.fromJson(response.data);
+            if (_listReport.data == null || _listReport.data.length == 0) {
+              _listReport = tempList;
+              if (_listReport.data == null || _listReport.data.length == 0) {
+                yield GetListReportEmpty();
+              } else {
+                yield GetListReportSuccess(_listReport);
+              }
+            } else {
+              _listReport.data.addAll(tempList.data);
+              yield GetListReportSuccess(_listReport);
+            }
+          } else {
+            yield GetListReportFailed("Failed get data report");
+          }
+        }
+      } catch (e) {
+        yield GetListReportFailed(e.toString());
       }
     }
   }

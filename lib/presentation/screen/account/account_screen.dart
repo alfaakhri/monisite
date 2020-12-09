@@ -213,7 +213,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 : ListTile(
                     leading: Icon(Icons.account_circle),
                     title: Text(
-                      'Name',
+                      'Nama',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
@@ -268,7 +268,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ? ListTile(
                     leading: Icon(Icons.phone),
                     title: Text(
-                      'Telephone',
+                      'Telepon',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: TextFormField(
@@ -283,7 +283,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 : ListTile(
                     leading: Icon(Icons.phone),
                     title: Text(
-                      'Telephone',
+                      'Telepon',
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(

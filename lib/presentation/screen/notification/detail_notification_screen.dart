@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_monisite/data/models/notification/notification_model.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DetailNotificationScreen extends StatefulWidget {
+  final DataNotification dataNotification;
+
+  const DetailNotificationScreen({Key key, this.dataNotification}) : super(key: key);
   @override
   _DetailNotificationScreenState createState() =>
       _DetailNotificationScreenState();
@@ -14,7 +18,7 @@ class _DetailNotificationScreenState extends State<DetailNotificationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notification"),
+        title: Text("Detail"),
       ),
       body: Container(
         alignment: Alignment.center,

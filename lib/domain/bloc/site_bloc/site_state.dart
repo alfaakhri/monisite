@@ -57,21 +57,28 @@ class GetSiteBySearchSuccess extends SiteState {
 }
 
 class GetReportMonitorLoading extends SiteState {}
+
 class GetReportMonitorSuccess extends SiteState {
   final ReportMonitorModel reportMonitor;
 
   GetReportMonitorSuccess(this.reportMonitor);
 }
+
 class GetReportMonitorFailed extends SiteState {
   final String message;
 
   GetReportMonitorFailed(this.message);
 }
+
 class GetReportMonitorEmpty extends SiteState {}
 
 class GetListReportLoading extends SiteState {}
 
-class GetListReportSuccess extends SiteState {}
+class GetListReportSuccess extends SiteState {
+  final ReportMonitorModel listReport;
+
+  GetListReportSuccess(this.listReport);
+}
 
 class GetListReportEmpty extends SiteState {}
 

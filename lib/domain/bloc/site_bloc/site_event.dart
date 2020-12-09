@@ -27,6 +27,7 @@ class GetReportMonitor extends SiteEvent {
 class GetListReport extends SiteEvent {
   final int siteId;
   final String fromDate;
+  final int pageIndex;
 
-  GetListReport(this.siteId, this.fromDate);
+  GetListReport(this.siteId, this.fromDate, this.pageIndex);
 }

@@ -39,7 +39,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    Provider.of<AuthProvider>(context, listen: false).getToken();
     super.initState();
     authBloc = BlocProvider.of<AuthBloc>(context);
   }
