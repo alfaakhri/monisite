@@ -42,6 +42,7 @@ class NotifBloc extends Bloc<NotifEvent, NotifState> {
           var response = await _apiService.getListNotification(_token);
           if (response.statusCode == 200) {
             _notifModel = NotificationModel.fromJson(response.data);
+            _notifModel.data = _notifModel.data.reversed.toList();
             if (_notifModel.success) {
               yield GetListNotifSuccess(_notifModel);
             } else {
@@ -53,6 +54,46 @@ class NotifBloc extends Bloc<NotifEvent, NotifState> {
         }
       } catch (e) {
         yield GetListNotifFailed(e.toString());
+      }
+    } else if (event is PostAcceptNotif) {
+      yield PostAcceptNotifLoading();
+      try {
+        var tokenNew = await _sharedPref.getToken();
+        if (tokenNew == null) {
+          yield NotifMustLogin();
+        } else {
+          _token = tokenNew;
+
+          var response =
+              await _apiService.postAcceptNotif(event.notifId, _token);
+          if (response.statusCode == 200) {
+            yield PostAcceptNotifSuccess();
+          } else {
+            yield PostAcceptNotifFailed("Failed post fixing notif");
+          }
+        }
+      } catch (e) {
+        yield PostAcceptNotifFailed(e.toString());
+      }
+    } else if (event is PostHistoryProcess) {
+      yield PostHistoryProcessLoading();
+      try {
+        var tokenNew = await _sharedPref.getToken();
+        if (tokenNew == null) {
+          yield NotifMustLogin();
+        } else {
+          _token = tokenNew;
+
+          var response =
+              await _apiService.postHistoryProcess(event.notifId, event.status, _token);
+          if (response.statusCode == 200) {
+            yield PostHistoryProcessSuccess(event.status);
+          } else {
+            yield PostHistoryProcessFailed("Failed post fixing notif");
+          }
+        }
+      } catch (e) {
+        yield PostHistoryProcessFailed(e.toString());
       }
     }
   }

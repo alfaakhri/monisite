@@ -366,7 +366,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                   color: Colors.white, size: 20),
                               UIHelper.horizontalSpaceVerySmall,
                               Container(
-                                  child: Text("Site ID: ${monitor.data.siteId}",
+                                  child: Text("Kode: ${monitor.data.code}",
                                       style: TextStyle(color: Colors.white))),
                             ],
                           ),

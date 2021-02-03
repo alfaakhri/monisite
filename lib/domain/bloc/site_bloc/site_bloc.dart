@@ -42,12 +42,6 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     _reportMonitor = reportMonitor;
   }
 
-  ReportMonitorModel _listReport = ReportMonitorModel();
-  ReportMonitorModel get listReport => _listReport;
-  void setListReport(List<DataMonitor> listReport) {
-    _listReport.data.addAll(listReport);
-  }
-
   String _status;
   String get status => _status;
   void setStatus(String status) {
@@ -148,13 +142,12 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           yield SiteMustLogin();
         } else {
           _token = tokenNew;
-          DateTime toDate = DateTime.parse(event.fromDate);
+          DateTime toDate = DateTime.parse(event.toDate);
 
           var response = await _apiService.getReportMonitor(
               event.siteId,
-              event.fromDate,
-              DateFormat('yyyy-MM-dd')
-                  .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
+              DateFormat('yyyy-MM-dd').format(DateTime.parse(event.fromDate)),
+              DateFormat('yyyy-MM-dd').format(toDate),
               _token);
           if (response.statusCode == 200) {
             _reportMonitor = ReportMonitorModel.fromJson(response.data);
@@ -170,45 +163,6 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
         }
       } catch (e) {
         yield GetReportMonitorFailed(e.toString());
-      }
-    } else if (event is GetListReport) {
-      yield GetListReportLoading();
-      try {
-        var tokenNew = await _sharedPreferenceService.getToken();
-        if (tokenNew == null) {
-          yield SiteMustLogin();
-        } else {
-          _token = tokenNew;
-          DateTime toDate = DateTime.parse(event.fromDate);
-
-          var response = await _apiService.getReportListMonitor(
-              event.siteId,
-              event.fromDate,
-              DateFormat('yyyy-MM-dd')
-                  .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
-              _token,
-              event.pageIndex);
-          if (response.statusCode == 200) {
-            _listReport.data = null;
-            ReportMonitorModel tempList =
-                ReportMonitorModel.fromJson(response.data);
-            if (_listReport.data == null || _listReport.data.length == 0) {
-              _listReport = tempList;
-              if (_listReport.data == null || _listReport.data.length == 0) {
-                yield GetListReportEmpty();
-              } else {
-                yield GetListReportSuccess(_listReport);
-              }
-            } else {
-              _listReport.data.addAll(tempList.data);
-              yield GetListReportSuccess(_listReport);
-            }
-          } else {
-            yield GetListReportFailed("Failed get data report");
-          }
-        }
-      } catch (e) {
-        yield GetListReportFailed(e.toString());
       }
     }
   }

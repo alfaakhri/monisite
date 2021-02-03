@@ -42,3 +42,11 @@ class EditPhotoProfile extends AuthEvent {
 
   EditPhotoProfile(this.context);
 }
+
+class ChangePassword extends AuthEvent {
+  final String newPassoword;
+  final String cPassword;
+  final String oldPassword;
+
+  ChangePassword(this.newPassoword, this.cPassword, this.oldPassword);
+}

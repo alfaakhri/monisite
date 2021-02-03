@@ -35,9 +35,17 @@ class DataNotification {
   int siteId;
   int alarmId;
   String title;
-  String fixingBy;
+  String acceptTime;
+  int fixingBy;
   String fixingTime;
   String createdAt;
+  String code;
+  String siteName;
+  String address;
+  String tenantOm;
+  String tp;
+  String latitude;
+  String longitude;
 
   DataNotification(
       {this.id,
@@ -47,9 +55,17 @@ class DataNotification {
       this.siteId,
       this.alarmId,
       this.title,
+      this.acceptTime,
       this.fixingBy,
       this.fixingTime,
-      this.createdAt});
+      this.createdAt,
+      this.code,
+      this.siteName,
+      this.address,
+      this.tenantOm,
+      this.tp,
+      this.latitude,
+      this.longitude});
 
   DataNotification.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -59,9 +75,17 @@ class DataNotification {
     siteId = json['site_id'];
     alarmId = json['alarm_id'];
     title = json['title'];
+    acceptTime = json['accept_time'];
     fixingBy = json['fixing_by'];
     fixingTime = json['fixing_time'];
     createdAt = json['created_at'];
+    code = json['code'];
+    siteName = json['site_name'];
+    address = json['address'];
+    tenantOm = json['tenant_om'];
+    tp = json['tp'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
   }
 
   Map<String, dynamic> toJson() {
@@ -73,9 +97,17 @@ class DataNotification {
     data['site_id'] = this.siteId;
     data['alarm_id'] = this.alarmId;
     data['title'] = this.title;
+    data['accept_time'] = this.acceptTime;
     data['fixing_by'] = this.fixingBy;
     data['fixing_time'] = this.fixingTime;
     data['created_at'] = this.createdAt;
+    data['code'] = this.code;
+    data['site_name'] = this.siteName;
+    data['address'] = this.address;
+    data['tenant_om'] = this.tenantOm;
+    data['tp'] = this.tp;
+    data['latitude'] = this.latitude;
+    data['longitude'] = this.longitude;
     return data;
   }
 }

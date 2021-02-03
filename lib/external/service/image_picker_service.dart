@@ -81,11 +81,7 @@ class ImagePickerService {
                         height: 50,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                            Colors.blue.shade800,
-                            Colors.blue.shade300
-                          ]),
-                          color: ColorHelpers.colorWhite,
+                          color: Colors.blue.shade800,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(

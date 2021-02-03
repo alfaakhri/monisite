@@ -74,7 +74,7 @@ class _SearchSiteScreenState extends State<SearchSiteScreen> {
                 } else if (state is GetSiteBySearchFailed) {
                   return ErrorHandlingWidget(
                       icon: "images/laptop.png",
-                      title: "Ada sesuatu yang error",
+                      title: "Gagal mengambil data",
                       subTitle: "Silahkan kembali dalam beberapa saat lagi.");
                 } else if (state is GetSiteBySearchEmpty) {
                   return ErrorHandlingWidget(

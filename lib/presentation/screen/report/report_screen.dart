@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/data/models/ChartReport.dart';
 import 'package:flutter_monisite/data/models/monitor/report_monitor_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
+import 'package:flutter_monisite/domain/bloc/list_report_bloc/list_report_bloc.dart';
 import 'package:flutter_monisite/domain/bloc/site_bloc/site_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/date_picker.dart';
@@ -40,21 +41,31 @@ class ReportScreen extends StatefulWidget {
 
 class _ReportScreenState extends State<ReportScreen> {
   SiteBloc siteBloc;
-  String _itemFilter = "Suhu";
-  TextEditingController _dateController = TextEditingController();
+  ListReportBloc listReportBloc;
+  String _itemFilter;
+  TextEditingController _fromDate = TextEditingController();
+  TextEditingController _toDate = TextEditingController();
   ScrollController _scrollController = new ScrollController();
   int _pageIndex = 2;
   List<charts.Series<ChartReport, DateTime>> _seriesLineData;
   bool isLoading = false;
   Widget lineChart;
 
+  DateTime dateFrom;
+  DateTime dateTo;
+
   @override
   void initState() {
     super.initState();
     siteBloc = BlocProvider.of<SiteBloc>(context);
-    _dateController.text =
-        DateFormat("yyyy-MM-dd").format(DateTime.now().toLocal());
-    siteBloc.add(GetReportMonitor(widget.siteId, _dateController.text));
+    listReportBloc = BlocProvider.of<ListReportBloc>(context);
+    dateFrom = DateTime.now().toLocal();
+    dateTo = DateTime(dateFrom.year, dateFrom.month, dateFrom.day + 1);
+    this._itemFilter = "Suhu";
+    _fromDate.text = DateFormat("dd MMM yyyy").format(dateFrom);
+    _toDate.text = DateFormat("dd MMM yyyy").format(dateTo);
+    siteBloc.add(GetReportMonitor(
+        widget.siteId, dateFrom.toString(), dateTo.toString()));
     _seriesLineData = List<charts.Series<ChartReport, DateTime>>();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
@@ -70,142 +81,6 @@ class _ReportScreenState extends State<ReportScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  // void addFlSpot(ReportMonitorModel report) {
-  //   // List<DataPoint<dynamic>> _data = List<DataPoint<dynamic>>();
-  //   List<FlSpot> _data = List<FlSpot>();
-  //   List<double> xAxis = List<double>();
-  //   report.data.forEach((element) {
-  //     String time = DateTime.parse(element.createdAt).toLocal().toString();
-  //     print("Time $time");
-  //     time = time.split(" ")[1];
-  //     time = time.split(".")[0];
-  //     time = time.substring(0, 5);
-  //     time = time.replaceAll(":", ".");
-  //     double timeNew = double.parse(time);
-  //     print("Waktu : $time - $timeNew");
-
-  //     // _data.add(DataPoint<double>(
-  //     //     value: double.parse(element.temperature), xAxis: timeNew));
-  //     _data.add(FlSpot(timeNew, double.parse(element.temperature)));
-  //     xAxis.add(timeNew);
-  //   });
-  //   setState(() {
-  //     dataReport = _data.reversed.toList();
-  //     xAxisListReport = xAxis.reversed.toList();
-  //   });
-  // }
-
-  _generateData(ReportMonitorModel report, String filter) {
-    List<ChartReport> lineSalesdata = List<ChartReport>();
-    setState(() {
-      report.data.map((element) {
-      if (filter.toLowerCase() == "suhu") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.temperature)));
-      } else if (filter.toLowerCase() == "tekanan") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.pressure)));
-      } else if (filter.toLowerCase() == "arus r") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.arusR)));
-      } else if (filter.toLowerCase() == "arus s") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.arusS)));
-      } else if (filter.toLowerCase() == "arus t") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.arusT)));
-      } else if (filter.toLowerCase() == "arus ac") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.arusAc)));
-      } else if (filter.toLowerCase() == "tegangan rs") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganRs)));
-      } else if (filter.toLowerCase() == "tegangan st") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganSt)));
-      } else if (filter.toLowerCase() == "tegangan rn") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganRn)));
-      } else if (filter.toLowerCase() == "tegangan sn") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganSn)));
-      } else if (filter.toLowerCase() == "tegangan tn") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganTn)));
-      } else if (filter.toLowerCase() == "tegangan rt") {
-        lineSalesdata.add(ChartReport(
-            DateTime.parse(element.createdAt).toLocal(),
-            double.parse(element.teganganRt)));
-      }
-    }).toList();
-
-      _seriesLineData.add(
-        charts.Series(
-          colorFn: (__, _) => charts.ColorUtil.fromDartColor(Colors.blue),
-          id: 'Air Pollution',
-          data: lineSalesdata,
-          domainFn: (ChartReport report, _) => report.time,
-          measureFn: (ChartReport report, _) => report.data,
-        ),
-      );
-
-      lineChart = charts.TimeSeriesChart(_seriesLineData,
-        defaultRenderer:
-            new charts.LineRendererConfig(includeArea: true, stacked: true),
-        animate: true,
-        animationDuration: Duration(seconds: 5),
-        behaviors: [
-          new charts.ChartTitle('Hari',
-              behaviorPosition: charts.BehaviorPosition.bottom,
-              titleOutsideJustification:
-                  charts.OutsideJustification.middleDrawArea),
-          new charts.ChartTitle(_itemFilter,
-              behaviorPosition: charts.BehaviorPosition.start,
-              titleOutsideJustification:
-                  charts.OutsideJustification.middleDrawArea),
-        ]);
-    });
-    
-  }
-
-  void _getMoreData() async {
-    Dio dio = Dio();
-    print("Page " + _pageIndex.toString());
-    if (!isLoading) {
-      setState(() {
-        isLoading = true;
-      });
-      DateTime toDate = DateTime.parse(_dateController.text);
-      var toDateText = DateFormat('yyyy-MM-dd')
-              .format(DateTime(toDate.year, toDate.month, toDate.day + 1)),
-          response = await dio.get(
-              BASE_URL +
-                  "/api/v1/monitor?site_id=${widget.siteId}&from=${_dateController.text}&to=$toDateText&limit=10&page=$_pageIndex",
-              options: Options(
-                  headers: {"Authorization": "Bearer ${siteBloc.token}"}));
-      ReportMonitorModel tempList = new ReportMonitorModel();
-
-      tempList = ReportMonitorModel.fromJson(response.data);
-
-      setState(() {
-        _pageIndex++;
-        isLoading = false;
-        siteBloc.setListReport(tempList.data);
-      });
-    }
   }
 
   @override
@@ -241,8 +116,12 @@ class _ReportScreenState extends State<ReportScreen> {
                   Fluttertoast.showToast(msg: state.message);
                 } else if (state is GetReportMonitorSuccess) {
                   _seriesLineData.clear();
-
                   _generateData(state.reportMonitor, "Suhu");
+                  listReportBloc.add(GetListReport(
+                      widget.siteId,
+                      DateFormat("yyyy-MM-dd").format(this.dateFrom),
+                      DateFormat("yyyy-MM-dd").format(this.dateTo),
+                      1));
                 }
               },
               builder: (context, state) {
@@ -251,20 +130,32 @@ class _ReportScreenState extends State<ReportScreen> {
                 } else if (state is GetReportMonitorFailed) {
                   return ErrorHandlingWidget(
                     icon: 'images/laptop.png',
-                    title: "Ada sesuatu yang error",
+                    title: "Gagal mengambil data",
                     subTitle: "Silahkan kembali beberapa saat lagi.",
                   );
                 } else if (state is GetReportMonitorLoading) {
                   return _buildSkeletonLoading();
                 } else if (state is GetReportMonitorEmpty) {
-                  return ErrorHandlingWidget(
-                    icon: 'images/laptop.png',
-                    title: "Data Laporan Kosong",
-                    subTitle: "Silahkan kembali beberapa saat lagi.",
-                  );
+                  return _buildErrorHandling(context);
                 }
                 return _buildContent(siteBloc.reportMonitor);
               })),
+    );
+  }
+
+  ListView _buildErrorHandling(BuildContext context) {
+    return ListView(
+      children: [
+        _contentFilter(),
+        Center(
+          heightFactor: 3.5,
+          child: ErrorHandlingWidget(
+            icon: 'images/laptop.png',
+            title: "Laporan Hari Ini Belum Ada",
+            subTitle: "Silahkan filter tanggal terlebih dahulu",
+          ),
+        ),
+      ],
     );
   }
 
@@ -299,7 +190,7 @@ class _ReportScreenState extends State<ReportScreen> {
           Container(
             color: ColorHelpers.colorGrey,
             width: MediaQuery.of(context).size.width,
-            height: 250,
+            height: 350,
           ),
           UIHelper.verticalSpaceSmall,
           Expanded(
@@ -307,10 +198,10 @@ class _ReportScreenState extends State<ReportScreen> {
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
-                    height: 100,
+                    height: 80,
                     decoration: BoxDecoration(
                         color: ColorHelpers.colorGrey,
                         borderRadius: BorderRadius.circular(10)),
@@ -325,41 +216,7 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildSkeletonListLoading() {
-    return SkeletonAnimation(
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
-        child: ListView.builder(
-          physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 80,
-                decoration: BoxDecoration(
-                    color: ColorHelpers.colorGrey,
-                    borderRadius: BorderRadius.circular(10)),
-              ),
-            );
-          },
-          itemCount: 3,
-        ),
-      ),
-    );
-  }
-
   Widget _buildSkeletonOneDataListLoading() {
-    // return SkeletonAnimation(
-    //   child: Container(
-    //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-    //     width: MediaQuery.of(context).size.width,
-    //     height: 80,
-    //     decoration: BoxDecoration(
-    //         color: ColorHelpers.colorGrey,
-    //         borderRadius: BorderRadius.circular(10)),
-    //   ),
-    // );
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Center(
@@ -372,87 +229,14 @@ class _ReportScreenState extends State<ReportScreen> {
     if (reportMonitorModel == null) {
       return _buildSkeletonLoading();
     } else {
-      if (reportMonitorModel.data == null) {
-        return _buildSkeletonLoading();
+      if (reportMonitorModel.data == null ||
+          reportMonitorModel.data.length == 0) {
+        return _buildErrorHandling(context);
       } else {
         return ListView(
           controller: _scrollController,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    flex: 5,
-                    child: DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                            contentPadding: EdgeInsets.all(10),
-                            labelText: "Sensor",
-                            filled: true,
-                            fillColor: Colors.white,
-                            isDense: true,
-                            enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.blue)),
-                            focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black)),
-                            border: OutlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black))),
-                        items: listItem
-                            .map((value) => DropdownMenuItem<String>(
-                                  child: Text(value),
-                                  value: value,
-                                ))
-                            .toList(),
-                        onChanged: (String value) {
-                          setState(() {
-                            _itemFilter = value;
-                            _seriesLineData.clear();
-
-                            _generateData(reportMonitorModel, _itemFilter);
-                          });
-                        },
-                        value: _itemFilter),
-                  ),
-                  UIHelper.horizontalSpaceSmall,
-                  Expanded(
-                    flex: 5,
-                    child: TextFormField(
-                      controller: _dateController,
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(new FocusNode());
-
-                        DatePicker().selectDate(context).then((result) {
-                          setState(() {
-                            if (result == null) {
-                              _dateController.text = null;
-                            } else {
-                              _pageIndex = 2;
-                              _dateController.text =
-                                  DateFormat("yyyy-MM-dd").format(result);
-                              siteBloc.add(GetReportMonitor(
-                                  widget.siteId, _dateController.text));
-                            }
-                          });
-                        });
-                      },
-                      decoration: InputDecoration(
-                          contentPadding: EdgeInsets.all(10),
-                          labelText: "Tanggal",
-                          filled: true,
-                          fillColor: Colors.white,
-                          isDense: true,
-                          enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.blue)),
-                          focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black)),
-                          border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black))),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            _contentFilter(reportMonitorModel: reportMonitorModel),
             UIHelper.verticalSpaceSmall,
             Text(reportMonitorModel.data.first.siteName,
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -469,32 +253,25 @@ class _ReportScreenState extends State<ReportScreen> {
             UIHelper.verticalSpaceMedium,
             Container(
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: BlocBuilder<SiteBloc, SiteState>(
+              child: BlocBuilder<ListReportBloc, ListReportState>(
                 builder: (context, state) {
                   if (state is GetListReportLoading) {
-                    // return _buildSkeletonListLoading();
                     return Center(child: CircularProgressIndicator());
                   } else if (state is GetListReportEmpty) {
                     return ErrorHandlingWidget(
                       icon: 'images/laptop.png',
-                      title: "Data list report kosong",
+                      title: "Daftar Laporan Hari Ini Belum Ada",
                       subTitle: "Silahkan kembali beberapa saat lagi.",
                     );
                   } else if (state is GetListReportFailed) {
                     return ErrorHandlingWidget(
                       icon: 'images/laptop.png',
-                      title: "Ada sesuatu yang error",
+                      title: "Gagal mengambil data",
                       subTitle: "Silahkan kembali beberapa saat lagi.",
                     );
                   } else if (state is GetListReportSuccess) {
                     return buildContentListReport(state.listReport);
-                  } else if (state is GetReportMonitorSuccess) {
-                    siteBloc.add(
-                        GetListReport(widget.siteId, _dateController.text, 1));
-                    // return _buildSkeletonListLoading();
-                    return Center(child: CircularProgressIndicator());
                   }
-                  // return _buildSkeletonListLoading();
                   return Center(child: CircularProgressIndicator());
                 },
               ),
@@ -503,6 +280,123 @@ class _ReportScreenState extends State<ReportScreen> {
         );
       }
     }
+  }
+
+  Container _contentFilter({ReportMonitorModel reportMonitorModel}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Column(
+        children: [
+          DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                  contentPadding: EdgeInsets.all(10),
+                  labelText: "Sensor",
+                  filled: true,
+                  fillColor: Colors.white,
+                  isDense: true,
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue)),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black))),
+              items: listItem
+                  .map((value) => DropdownMenuItem<String>(
+                        child: Text(value),
+                        value: value,
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _itemFilter = value;
+                  _seriesLineData.clear();
+
+                  _generateData(reportMonitorModel, _itemFilter);
+                });
+              },
+              value: _itemFilter),
+          UIHelper.verticalSpaceSmall,
+          Row(
+            children: [
+              Expanded(
+                flex: 5,
+                child: TextFormField(
+                  controller: _fromDate,
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+
+                    DatePicker().selectDate(context).then((result) {
+                      setState(() {
+                        if (result == null) {
+                          _fromDate.text = null;
+                        } else {
+                          _pageIndex = 2;
+                          this.dateFrom = result;
+                          siteBloc.add(GetReportMonitor(widget.siteId,
+                              result.toString(), this.dateTo.toString()));
+                          _fromDate.text =
+                              DateFormat("dd MMM yyyy").format(result);
+                        }
+                      });
+                    });
+                  },
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(10),
+                      labelText: "Tanggal Mulai",
+                      filled: true,
+                      fillColor: Colors.white,
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black))),
+                ),
+              ),
+              UIHelper.horizontalSpaceSmall,
+              Expanded(
+                flex: 5,
+                child: TextFormField(
+                  controller: _toDate,
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+
+                    DatePicker().selectDate(context).then((result) {
+                      setState(() {
+                        if (result == null) {
+                          _toDate.text = null;
+                        } else {
+                          _pageIndex = 2;
+                          this.dateTo = result;
+                          siteBloc.add(GetReportMonitor(widget.siteId,
+                              this.dateFrom.toString(), result.toString()));
+
+                          _toDate.text =
+                              DateFormat("dd MMM yyyy").format(result);
+                        }
+                      });
+                    });
+                  },
+                  decoration: InputDecoration(
+                      contentPadding: EdgeInsets.all(10),
+                      labelText: "Tanggal Akhir",
+                      filled: true,
+                      fillColor: Colors.white,
+                      isDense: true,
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.blue)),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black)),
+                      border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black))),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   ListView buildContentListReport(ReportMonitorModel reportMonitorModel) {
@@ -636,7 +530,112 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  // Widget chart(ReportMonitorModel report) {
-  //   return 
-  // }
+  _generateData(ReportMonitorModel report, String filter) {
+    List<ChartReport> lineSalesdata = List<ChartReport>();
+    setState(() {
+      report.data.map((element) {
+        if (filter.toLowerCase() == "suhu") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.temperature)));
+        } else if (filter.toLowerCase() == "tekanan") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.pressure)));
+        } else if (filter.toLowerCase() == "arus r") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.arusR)));
+        } else if (filter.toLowerCase() == "arus s") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.arusS)));
+        } else if (filter.toLowerCase() == "arus t") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.arusT)));
+        } else if (filter.toLowerCase() == "arus ac") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.arusAc)));
+        } else if (filter.toLowerCase() == "tegangan rs") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganRs)));
+        } else if (filter.toLowerCase() == "tegangan st") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganSt)));
+        } else if (filter.toLowerCase() == "tegangan rn") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganRn)));
+        } else if (filter.toLowerCase() == "tegangan sn") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganSn)));
+        } else if (filter.toLowerCase() == "tegangan tn") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganTn)));
+        } else if (filter.toLowerCase() == "tegangan rt") {
+          lineSalesdata.add(ChartReport(
+              DateTime.parse(element.createdAt).toLocal(),
+              double.parse(element.teganganRt)));
+        }
+      }).toList();
+
+      _seriesLineData.add(
+        charts.Series(
+          colorFn: (__, _) => charts.ColorUtil.fromDartColor(Colors.blue),
+          id: 'Air Pollution',
+          data: lineSalesdata,
+          domainFn: (ChartReport report, _) => report.time,
+          measureFn: (ChartReport report, _) => report.data,
+        ),
+      );
+
+      lineChart = charts.TimeSeriesChart(_seriesLineData,
+          defaultRenderer:
+              new charts.LineRendererConfig(includeArea: true, stacked: true),
+          animate: true,
+          animationDuration: Duration(seconds: 5),
+          behaviors: [
+            new charts.ChartTitle('Hari',
+                behaviorPosition: charts.BehaviorPosition.bottom,
+                titleOutsideJustification:
+                    charts.OutsideJustification.middleDrawArea),
+            new charts.ChartTitle(_itemFilter,
+                behaviorPosition: charts.BehaviorPosition.start,
+                titleOutsideJustification:
+                    charts.OutsideJustification.middleDrawArea),
+          ]);
+    });
+  }
+
+  void _getMoreData() async {
+    Dio dio = Dio();
+    print("Page " + _pageIndex.toString());
+    if (!isLoading) {
+      setState(() {
+        isLoading = true;
+      });
+      var fromDate = DateFormat('yyyy-MM-dd').format(this.dateFrom);
+      var toDateText = DateFormat('yyyy-MM-dd').format(this.dateTo),
+          response = await dio.get(
+              BASE_URL +
+                  "/api/v1/monitor?site_id=${widget.siteId}&from=$fromDate&to=$toDateText&limit=10&page=$_pageIndex",
+              options: Options(
+                  headers: {"Authorization": "Bearer ${siteBloc.token}"}));
+      ReportMonitorModel tempList = new ReportMonitorModel();
+
+      tempList = ReportMonitorModel.fromJson(response.data);
+
+      setState(() {
+        _pageIndex++;
+        isLoading = false;
+        listReportBloc.setListReport(tempList.data);
+      });
+    }
+  }
 }

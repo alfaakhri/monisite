@@ -120,9 +120,38 @@ class ApiService {
 
   Future<Response> getListNotification(String token) async {
     try {
-      final response = await _dio.get(
-          BASE_URL +
-              "/api/v1/notification",
+      final response = await _dio.get(BASE_URL + "/api/v1/notification",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> postAcceptNotif(int notifId, String token) async {
+    try {
+      final response = await _dio.post(
+          BASE_URL + "/api/v1/acceptNotif/$notifId",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response> postHistoryProcess(
+      int notifId, int status, String token) async {
+    try {
+      final response = await _dio.post(BASE_URL + "/api/v1/fixNotif/$notifId",
+          data: {"status": status},
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
@@ -243,63 +272,25 @@ class ApiService {
     }
   }
 
-  Future<dynamic> getHistoryProccess() {
+  Future<Response> updatePassword(String newPassword, String cPassword,
+      String oldPassword, String token) async {
+    var data = {
+      "password": newPassword,
+      "c_password": cPassword,
+      "old_password": oldPassword
+    };
     try {
-      // final responseBody = await http
-      //     .get(BASE_URL + "/sensor/index_get?id=$id")
-      //     .then((http.Response response) {
-      //   final String res = response.body;
-      //   final int statusCode = response.statusCode;
+      response = await _dio.put(BASE_URL + "/api/v1/updatePassword",
+          data: data,
+          options: Options(headers: {"Authorization": "Bearer $token"}));
 
-      //   print("res: " + res + " statusCode: " + statusCode.toString());
-      //   if (statusCode < 200 || statusCode > 400 || json == null) {
-      //     throw new Failure("Error while fetching data");
-      //   }
-      //   return _decoder.convert(res);
-      // });
-      // return responseBody;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<dynamic> getHistoryFinished() {
-    try {
-      // final responseBody = await http
-      //     .get(BASE_URL + "/sensor/index_get?id=$id")
-      //     .then((http.Response response) {
-      //   final String res = response.body;
-      //   final int statusCode = response.statusCode;
-
-      //   print("res: " + res + " statusCode: " + statusCode.toString());
-      //   if (statusCode < 200 || statusCode > 400 || json == null) {
-      //     throw new Failure("Error while fetching data");
-      //   }
-      //   return _decoder.convert(res);
-      // });
-      // return responseBody;
-    } catch (e) {
-      throw e;
-    }
-  }
-
-  Future<dynamic> acceptNotification() {
-    try {
-      // final responseBody = await http
-      //     .get(BASE_URL + "/sensor/index_get?id=$id")
-      //     .then((http.Response response) {
-      //   final String res = response.body;
-      //   final int statusCode = response.statusCode;
-
-      //   print("res: " + res + " statusCode: " + statusCode.toString());
-      //   if (statusCode < 200 || statusCode > 400 || json == null) {
-      //     throw new Failure("Error while fetching data");
-      //   }
-      //   return _decoder.convert(res);
-      // });
-      // return responseBody;
-    } catch (e) {
-      throw e;
+      return response;
+    } on DioError catch (e) {
+      if (e.response.statusCode == 422) {
+        return e.response;
+      } else {
+        throw e;
+      }
     }
   }
 }

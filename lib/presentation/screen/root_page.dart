@@ -40,12 +40,12 @@ Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) async {
     final data = message['data'];
 
     // final title = data['key'];
-    // final body = jsonDecode(data['value']);
-    // final description = body['Description'];
-    // final roleID = body['FromRole'];
+    // final notif = jsonDecode(data);
+    final title = data['title'];
+    final body = data['body'];
 
     await _showNotificationWithDefaultSound(
-        "Cek", "Notifikasi");
+        title, body);
 
     // print("Description: " + description);
     // print("Body: " + body.toString());

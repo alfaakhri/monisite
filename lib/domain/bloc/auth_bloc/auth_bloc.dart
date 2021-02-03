@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_monisite/data/models/profile_model.dart';
 import 'package:flutter_monisite/data/models/registration_model.dart';
 import 'package:flutter_monisite/data/models/registration_response.dart';
+import 'package:flutter_monisite/data/models/response_update_password.dart';
 import 'package:flutter_monisite/data/models/token_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/external/service/firebase_service.dart';
@@ -212,6 +213,31 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } else {
         yield EditPhotoProfileCancel();
+      }
+    } else if (event is ChangePassword) {
+      yield ChangePasswordLoading();
+      try {
+        var tokenNew = await _sharedPreferenceService.getToken();
+        if (tokenNew == null) {
+          yield GetAuthMustLogin();
+        } else {
+          _token = tokenNew;
+          var response = await _apiService.updatePassword(
+              event.newPassoword, event.cPassword, event.oldPassword, _token);
+          if (response.statusCode == 200) {
+            ResponseUpdatePassword responseUpdate = ResponseUpdatePassword();
+            responseUpdate = ResponseUpdatePassword.fromJson(response.data);
+            if (responseUpdate.success) {
+              yield ChangePasswordMatch(responseUpdate);
+            } else
+              yield ChangePasswordNotMatch(responseUpdate);
+          } else {
+            yield ChangePasswordFailed(
+                "Something wrong update password, try again");
+          }
+        }
+      } catch (e) {
+        yield ChangePasswordFailed(e.toString());
       }
     }
   }

@@ -76,3 +76,22 @@ class EditPhotoProfileFailed extends AuthState {
 }
 
 class EditPhotoProfileMaxSize extends AuthState {}
+
+class ChangePasswordLoading extends AuthState {}
+class ChangePasswordMatch extends AuthState {
+  final ResponseUpdatePassword response;
+
+  ChangePasswordMatch(this.response);
+}
+
+class ChangePasswordNotMatch extends AuthState {
+  final ResponseUpdatePassword response;
+
+  ChangePasswordNotMatch(this.response);
+}
+
+class ChangePasswordFailed extends AuthState {
+  final String message;
+
+  ChangePasswordFailed(this.message);
+}

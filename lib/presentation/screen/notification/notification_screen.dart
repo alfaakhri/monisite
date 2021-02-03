@@ -8,6 +8,7 @@ import 'package:flutter_monisite/presentation/screen/notification/detail_notific
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:skeleton_text/skeleton_text.dart';
 
 class NotificationScreen extends StatefulWidget {
   @override
@@ -28,6 +29,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: ColorHelpers.colorWhite,
       appBar: AppBar(
         title: Text("Pemberitahuan"),
       ),
@@ -55,8 +57,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _skeletonLoading() {
-    return Center(
-      child: CircularProgressIndicator(),
+    return SkeletonAnimation(
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              height: 60,
+              decoration: BoxDecoration(
+                  color: ColorHelpers.colorGrey,
+                  borderRadius: BorderRadius.circular(10)),
+            ),
+          );
+        },
+        itemCount: 10,
+      ),
     );
   }
 
@@ -65,7 +81,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: ListView(
         children: notif.data.map((element) {
           DataNotification notify = element;
-          var dateOnly = notify.createdAt;
+          var dateOnly = notify.createdAt.split("T")[0];
           bool checkDate;
           if (date == null) {
             date = dateOnly;
@@ -82,7 +98,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
             }
           }
           return GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Get.to(DetailNotificationScreen(
+                dataNotification: element,
+              ));
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -90,14 +110,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ? Container()
                     : Container(
                         width: double.infinity,
-                        padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                        padding: EdgeInsets.only(left: 15, top: 5, bottom: 10),
                         child: Text(
                           DateFormat("d/MM/yyyy")
                               .format(DateTime.parse(date).toLocal()),
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 12),
                         ),
                         decoration: BoxDecoration(
-                          color: ColorHelpers.colorBorder,
+                          color: ColorHelpers.colorBackground,
                         ),
                       ),
                 Container(
@@ -106,24 +127,36 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(element.title,
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700)),
-                            UIHelper.verticalSpaceVerySmall,
-                            Text(element.body,
-                                maxLines: 2,
-                                style: TextStyle(color: Colors.black))
-                          ],
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Container(
+                                child: Text(element.title,
+                                    style: TextStyle(
+                                        color: (element.status == 0)
+                                            ? Colors.black
+                                            : ColorHelpers.colorGreyTextField,
+                                        fontWeight: FontWeight.w700)),
+                              ),
+                              UIHelper.verticalSpaceVerySmall,
+                              Text(element.body,
+                                  maxLines: 2,
+                                  style: TextStyle(
+                                      color: (element.status == 0)
+                                          ? Colors.black
+                                          : ColorHelpers.colorGreyTextField))
+                            ],
+                          ),
                         ),
                         Text(
                             DateFormat("HH:mm").format(
                                 DateTime.parse(notify.createdAt).toLocal()),
-                            style:
-                                TextStyle(fontSize: 11, color: Colors.black)),
+                            style: TextStyle(
+                                fontSize: 11,
+                                color: (element.status == 0)
+                                    ? Colors.black
+                                    : ColorHelpers.colorGreyTextField)),
                       ],
                     )),
                 Divider(

@@ -32,12 +32,14 @@ class ErrorHandlingWidget extends StatelessWidget {
             UIHelper.verticalSpaceMedium,
             Text(
               title,
+              maxLines: 2,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
             UIHelper.verticalSpaceSmall,
             Text(
               subTitle,
+              maxLines: 2,
               style: TextStyle(
                 fontSize: 14,
               ),

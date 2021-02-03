@@ -13,6 +13,8 @@ import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
+import 'change_pass_screen.dart';
+
 class AccountScreen extends StatefulWidget {
   static const String id = "account_screen";
 
@@ -54,7 +56,7 @@ class _AccountScreenState extends State<AccountScreen> {
     return Scaffold(
       backgroundColor: ColorHelpers.colorWhite,
       appBar: AppBar(
-        title: Text("Account"),
+        title: Text("Informasi Pribadi"),
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: choiceAction,
@@ -111,7 +113,7 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is GetAuthFailed) {
             return ErrorHandlingWidget(
               icon: 'images/laptop.png',
-              title: "Ada sesuatu yang error",
+              title: "Gagal mengambil data",
               subTitle: "Silahkan kembali beberapa saat lagi.",
             );
           } else if (state is EditProfileLoading) {
@@ -121,7 +123,6 @@ class _AccountScreenState extends State<AccountScreen> {
             _telepon.text = state.profileModel.user.phoneNumber;
             _email.text = state.profileModel.user.email;
             _alamat.text = state.profileModel.user.address;
-            _isEdit = false;
 
             return _contentAccount(state.profileModel);
           } else if (state is EditPhotoProfileLoading) {
@@ -141,7 +142,7 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is EditPhotoProfileFailed) {
             return ErrorHandlingWidget(
               icon: 'images/laptop.png',
-              title: "Ada sesuatu yang error",
+              title: "Gagal mengambil data",
               subTitle: "Silahkan kembali beberapa saat lagi.",
             );
           }
@@ -492,6 +493,8 @@ class _AccountScreenState extends State<AccountScreen> {
           _isEdit = true;
         }
       });
+    } else if (choice == Constants.ChangePassword) {
+      Get.to(ChangePassScreen());
     } else {
       setState(() {
         authBloc.add(DoLogout());

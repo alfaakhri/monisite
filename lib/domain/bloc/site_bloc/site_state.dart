@@ -72,20 +72,4 @@ class GetReportMonitorFailed extends SiteState {
 
 class GetReportMonitorEmpty extends SiteState {}
 
-class GetListReportLoading extends SiteState {}
-
-class GetListReportSuccess extends SiteState {
-  final ReportMonitorModel listReport;
-
-  GetListReportSuccess(this.listReport);
-}
-
-class GetListReportEmpty extends SiteState {}
-
-class GetListReportFailed extends SiteState {
-  final String message;
-
-  GetListReportFailed(this.message);
-}
-
 class SiteMustLogin extends SiteState {}

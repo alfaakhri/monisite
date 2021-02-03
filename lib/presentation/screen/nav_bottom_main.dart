@@ -51,11 +51,13 @@ class _NavBottomMainState extends State<NavBottomMain>
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: ColorHelpers.colorWhite,
+      extendBody: true,
       body: Center(child: _widgetOptions.elementAt(_page)),
       bottomNavigationBar: CurvedNavigationBar(
         color: Colors.blue,
         height: 60,
         backgroundColor: Colors.transparent,
+        
         key: _bottomNavigationKey,
         items: <Widget>[
           Icon(Icons.home, size: 30, color: ColorHelpers.colorWhite),
