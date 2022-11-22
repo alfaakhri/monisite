@@ -1,7 +1,7 @@
 class NotificationModel {
-  bool success;
-  String message;
-  List<DataNotification> data;
+  bool? success;
+  String? message;
+  List<DataNotification>? data;
 
   NotificationModel({this.success, this.message, this.data});
 
@@ -9,9 +9,9 @@ class NotificationModel {
     success = json['success'];
     message = json['message'];
     if (json['data'] != null) {
-      data = new List<DataNotification>();
+      data = [];
       json['data'].forEach((v) {
-        data.add(new DataNotification.fromJson(v));
+        data!.add(new DataNotification.fromJson(v));
       });
     }
   }
@@ -21,31 +21,31 @@ class NotificationModel {
     data['success'] = this.success;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
     return data;
   }
 }
 
 class DataNotification {
-  int id;
-  String body;
-  String priority;
-  int status;
-  int siteId;
-  int alarmId;
-  String title;
-  String acceptTime;
-  int fixingBy;
-  String fixingTime;
-  String createdAt;
-  String code;
-  String siteName;
-  String address;
-  String tenantOm;
-  String tp;
-  String latitude;
-  String longitude;
+  int? id;
+  String? body;
+  String? priority;
+  int? status;
+  int? siteId;
+  int? alarmId;
+  String? title;
+  String? acceptTime;
+  int? fixingBy;
+  String? fixingTime;
+  String? createdAt;
+  String? code;
+  String? siteName;
+  String? address;
+  String? tenantOm;
+  String? tp;
+  String? latitude;
+  String? longitude;
 
   DataNotification(
       {this.id,

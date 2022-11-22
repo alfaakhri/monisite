@@ -7,7 +7,11 @@ class ErrorHandlingWidget extends StatelessWidget {
   final String title;
   final String subTitle;
 
-  const ErrorHandlingWidget({Key key, this.icon, this.title, this.subTitle})
+  const ErrorHandlingWidget(
+      {Key? key,
+      required this.icon,
+      required this.title,
+      required this.subTitle})
       : super(key: key);
   @override
   Widget build(BuildContext context) {

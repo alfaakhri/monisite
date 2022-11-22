@@ -1,11 +1,11 @@
 class RegistrationResponse {
-  Data data;
-  String token;
-  String tokenType;
-  int expiresIn;
-  List email;
-  List password;
-  List cPassword;
+  Data? data;
+  String? token;
+  String? tokenType;
+  int? expiresIn;
+  List? email;
+  List? password;
+  List? cPassword;
 
   RegistrationResponse({this.data, this.token, this.tokenType});
 
@@ -22,7 +22,7 @@ class RegistrationResponse {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     data['token'] = this.token;
     data['token_type'] = this.tokenType;
@@ -35,13 +35,13 @@ class RegistrationResponse {
 }
 
 class Data {
-  String name;
-  String email;
-  String phoneNumber;
-  int role;
-  String updatedAt;
-  String createdAt;
-  int id;
+  String? name;
+  String? email;
+  String? phoneNumber;
+  int? role;
+  String? updatedAt;
+  String? createdAt;
+  int? id;
 
   Data(
       {this.name,

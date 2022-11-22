@@ -1,15 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/data/models/notification/notification_model.dart';
-import 'package:flutter_monisite/data/models/site/site.dart';
-import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/domain/bloc/notif_bloc/notif_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
-import 'package:flutter_monisite/presentation/widgets/loading_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ProcessHistoryScreen extends StatefulWidget {
@@ -18,8 +14,7 @@ class ProcessHistoryScreen extends StatefulWidget {
 }
 
 class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
-  NotifBloc notifBloc;
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  late NotifBloc notifBloc;
 
   @override
   void initState() {
@@ -33,12 +28,12 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
     return BlocConsumer<NotifBloc, NotifState>(
       listener: (context, state) {
         if (state is PostHistoryProcessLoading) {
-          LoadingWidget.showLoadingDialog(context, _keyLoader);
+          EasyLoading.show();
         } else if (state is PostHistoryProcessFailed) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+          EasyLoading.dismiss();
           Fluttertoast.showToast(msg: state.message);
         } else if (state is PostHistoryProcessSuccess) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+          EasyLoading.dismiss();
           if (state.status == 2) {
             Fluttertoast.showToast(msg: "Berhasil");
           } else {
@@ -86,7 +81,7 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
     return Scaffold(
       backgroundColor: ColorHelpers.colorWhite,
       body: ListView(
-        children: notif.data.map((element) {
+        children: notif.data!.map((element) {
           return Column(
             children: [
               Container(
@@ -102,7 +97,7 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  element.siteName,
+                                  element.siteName ?? "",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold),
@@ -110,13 +105,13 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                               ),
                               UIHelper.verticalSpaceSmall,
                               Text(
-                                "Tenant OM: " + element.tenantOm,
+                                "Tenant OM: ${element.tenantOm ?? ""}",
                                 style: TextStyle(fontSize: 12),
                               ),
                               UIHelper.verticalSpaceVerySmall,
                               Container(
                                   child: Text(
-                                element.address,
+                                element.address?? "",
                                 maxLines: 3,
                                 style: TextStyle(fontSize: 12),
                               )),
@@ -128,7 +123,7 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    element.title,
+                                    element.title ?? "",
                                     style: TextStyle(
                                         color: Colors.red, fontSize: 12),
                                   ),
@@ -142,9 +137,10 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    element.acceptTime,
+                                    element.acceptTime ?? "",
                                     style: TextStyle(
-                                        fontSize: 12, fontWeight: FontWeight.bold),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -158,12 +154,11 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                                 children: [
                                   Expanded(
                                     flex: 5,
-                                    child: RaisedButton(
+                                    child: ElevatedButton(
                                       onPressed: () {
                                         notifBloc.add(
-                                            PostHistoryProcess(element.id, 3));
+                                            PostHistoryProcess(element.id!, 3));
                                       },
-                                      color: ColorHelpers.colorRed,
                                       child: Text(
                                         "Batal",
                                         style: TextStyle(color: Colors.white),
@@ -173,12 +168,11 @@ class _ProcessHistoryScreenState extends State<ProcessHistoryScreen> {
                                   UIHelper.horizontalSpaceSmall,
                                   Expanded(
                                       flex: 5,
-                                      child: RaisedButton(
+                                      child: ElevatedButton(
                                         onPressed: () {
                                           notifBloc.add(PostHistoryProcess(
-                                              element.id, 2));
+                                              element.id!, 2));
                                         },
-                                        color: ColorHelpers.colorGreen,
                                         child: Text(
                                           "Selesai",
                                           style: TextStyle(color: Colors.white),

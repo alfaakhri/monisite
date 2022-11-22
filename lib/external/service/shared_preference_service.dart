@@ -1,19 +1,17 @@
-import 'dart:convert';
 
-import 'package:flutter_monisite/data/models/token_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferenceService {
-  final String TOKEN = "token";
+  final String token = "token";
 
   void saveToken(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString(TOKEN, token);
+    await prefs.setString(token, token);
   }
 
-  Future<String> getToken() async {
+  Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String prefsValue = prefs.getString(TOKEN);
+    String? prefsValue = prefs.getString(token);
     if (prefsValue == null) {
       return null;
     } else {
@@ -23,8 +21,8 @@ class SharedPreferenceService {
 
   void deleteTokenModel() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(TOKEN);
+    await prefs.remove(token);
     await prefs.clear();
-    print("TokenModel " + prefs.getString(TOKEN).toString());
+    print("TokenModel " + prefs.getString(token).toString());
   }
 }

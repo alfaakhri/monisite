@@ -4,21 +4,20 @@ import 'package:flutter_monisite/data/models/monitor/monitor_model.dart';
 import 'package:flutter_monisite/domain/bloc/site_bloc/site_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
-import 'package:flutter_monisite/presentation/screen/report/report_screen.dart';
 import 'package:flutter_monisite/presentation/widgets/container_sensor.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeleton_text/skeleton_text.dart';
-import 'package:intl/intl.dart';
 
 import 'map_screen.dart';
 
 class DetailSiteMonitorScreen extends StatefulWidget {
   final int siteID;
 
-  const DetailSiteMonitorScreen({Key key, this.siteID}) : super(key: key);
+  const DetailSiteMonitorScreen({Key? key, required this.siteID})
+      : super(key: key);
   @override
   _DetailSiteMonitorScreenState createState() =>
       _DetailSiteMonitorScreenState();
@@ -28,7 +27,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  SiteBloc siteBloc;
+  late SiteBloc siteBloc;
 
   @override
   void initState() {
@@ -337,7 +336,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        child: Text(monitor.data.siteName,
+                        child: Text(monitor.data?.siteName ?? "",
                             style: TextStyle(
                                 fontSize: 26,
                                 fontWeight: FontWeight.w400,
@@ -354,7 +353,8 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                   color: Colors.white, size: 20),
                               UIHelper.horizontalSpaceVerySmall,
                               Container(
-                                  child: Text("Waktu Terbaru: ${DateTime.parse(monitor.data.createdAt).toLocal().toString().split(".")[0]}",
+                                  child: Text(
+                                      "Waktu Terbaru: ${DateTime.parse(monitor.data!.createdAt!).toLocal().toString().split(".")[0]}",
                                       style: TextStyle(color: Colors.white))),
                             ],
                           ),
@@ -366,7 +366,8 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                   color: Colors.white, size: 20),
                               UIHelper.horizontalSpaceVerySmall,
                               Container(
-                                  child: Text("Kode: ${monitor.data.code}",
+                                  child: Text(
+                                      "Kode: ${monitor.data?.code ?? ""}",
                                       style: TextStyle(color: Colors.white))),
                             ],
                           ),
@@ -378,7 +379,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                               UIHelper.horizontalSpaceVerySmall,
                               Container(
                                 child: Text(
-                                    "Tenant OM: ${monitor.data.tenantOm}",
+                                    "Tenant OM: ${monitor.data?.tenantOm ?? ""}",
                                     style: TextStyle(color: Colors.white)),
                               ),
                             ],
@@ -391,7 +392,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                               UIHelper.horizontalSpaceVerySmall,
                               Expanded(
                                 child: Container(
-                                    child: Text(monitor.data.address,
+                                    child: Text(monitor.data?.address ?? "",
                                         maxLines: 3,
                                         style: TextStyle(color: Colors.white))),
                               ),
@@ -406,9 +407,9 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      var lat = monitor.data.latitude
+                                      var lat = monitor.data!.latitude!
                                           .replaceAll(',', '.');
-                                      var long = monitor.data.longitude
+                                      var long = monitor.data!.longitude!
                                           .replaceAll(',', '.');
 
                                       var route = new MaterialPageRoute(
@@ -416,7 +417,8 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                             MapScreen(
                                           latitude: "$lat",
                                           longitude: "$long",
-                                          sitename: "${monitor.data.siteName}",
+                                          sitename:
+                                              "${monitor.data?.siteName ?? ""}",
                                         ),
                                       );
                                       Navigator.of(context).push(route);
@@ -443,8 +445,8 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(ReportScreen(
-                                          siteId: monitor.data.siteId));
+                                      // Get.to(ReportScreen(
+                                      //     siteId: monitor.data.siteId));
                                     },
                                     child: CircleAvatar(
                                       backgroundColor:
@@ -493,7 +495,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.ac_unit,
             title: 'Suhu',
             data:
-                (monitor.data != null) ? "${monitor.data.temperature}" : "N/A",
+                (monitor.data != null) ? "${monitor.data?.temperature}" : "N/A",
             unit: 'Celcius',
           ),
           UIHelper.verticalSpaceSmall,
@@ -501,7 +503,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.av_timer,
             title: 'Tekanan',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data.pressure).toStringAsFixed(2)}"
+                ? "${double.parse(monitor.data!.pressure ?? "0").toStringAsFixed(2)}"
                 : "N/A",
             unit: 'Psi',
           ),
@@ -510,7 +512,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus R',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data.arusR).toStringAsFixed(2)}"
+                ? "${double.parse(monitor.data?.arusR ?? "0").toStringAsFixed(2)}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -519,7 +521,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus S',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data.arusS).toStringAsFixed(2)}"
+                ? "${double.parse(monitor.data?.arusS ?? "0").toStringAsFixed(2)}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -528,7 +530,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus T',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data.arusT).toStringAsFixed(2)}"
+                ? "${double.parse(monitor.data?.arusT ?? "0").toStringAsFixed(2)}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -537,7 +539,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus AC',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data.arusAc).toStringAsFixed(2)}"
+                ? "${double.parse(monitor.data?.arusAc ?? "0").toStringAsFixed(2)}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -545,42 +547,54 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan RS',
-            data: (monitor.data != null) ? "${monitor.data.teganganRs}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganRs ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
           UIHelper.verticalSpaceSmall,
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan RT',
-            data: (monitor.data != null) ? "${monitor.data.teganganRt}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganRt ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
           UIHelper.verticalSpaceSmall,
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan ST',
-            data: (monitor.data != null) ? "${monitor.data.teganganSt}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganSt ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
           UIHelper.verticalSpaceSmall,
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan RN',
-            data: (monitor.data != null) ? "${monitor.data.teganganRn}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganRn ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
           UIHelper.verticalSpaceSmall,
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan SN',
-            data: (monitor.data != null) ? "${monitor.data.teganganSn}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganSn ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
           UIHelper.verticalSpaceSmall,
           ContainerSensor(
             iconData: Icons.flash_on,
             title: 'Tegangan TN',
-            data: (monitor.data != null) ? "${monitor.data.teganganTn}" : "N/A",
+            data: (monitor.data != null)
+                ? "${monitor.data?.teganganTn ?? "0"}"
+                : "N/A",
             unit: 'Volt',
           ),
         ],

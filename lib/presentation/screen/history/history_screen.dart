@@ -11,7 +11,7 @@ class HistoryScreen extends StatefulWidget {
  
 class _HistoryScreenState extends State<HistoryScreen>
     with SingleTickerProviderStateMixin {
-  TabController tabController;
+  late TabController tabController;
 
   @override
   void initState() {

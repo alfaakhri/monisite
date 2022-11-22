@@ -16,23 +16,25 @@ class SiteById {
   final int btsid;
   final String clustername;
   final int parentclusterid;
+  SiteById({
+    required this.id,
+    required this.siteid,
+    required this.sitename,
+    required this.towertype,
+    required this.towertypeheight,
+    required this.tenantom,
+    required this.tp,
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+    required this.clusterid,
+    required this.categoryid,
+    required this.btsid,
+    required this.clustername,
+    required this.parentclusterid,
+  });
 
-  SiteById(
-      {this.id,
-      this.siteid,
-      this.sitename,
-      this.towertype,
-      this.towertypeheight,
-      this.tenantom,
-      this.tp,
-      this.latitude,
-      this.longitude,
-      this.address,
-      this.clusterid,
-      this.categoryid,
-      this.btsid,
-      this.clustername,
-      this.parentclusterid});
+  
 
   factory SiteById.fromJson(Map<String, dynamic> json) {
     return SiteById(

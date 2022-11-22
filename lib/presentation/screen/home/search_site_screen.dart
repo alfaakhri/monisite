@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/data/models/site/list_sites_model.dart';
 import 'package:flutter_monisite/domain/bloc/site_bloc/site_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
-import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/screen/login/login_screen.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,7 +15,7 @@ class SearchSiteScreen extends StatefulWidget {
 }
 
 class _SearchSiteScreenState extends State<SearchSiteScreen> {
-  SiteBloc siteBloc;
+  late SiteBloc siteBloc;
 
   @override
   void initState() {
@@ -97,7 +96,7 @@ class _SearchSiteScreenState extends State<SearchSiteScreen> {
             padding: EdgeInsets.zero,
             child: ListView.builder(
               itemBuilder: (context, index) {
-                var site = sites.data[index];
+                var site = sites.data![index];
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: InkWell(
@@ -143,7 +142,7 @@ class _SearchSiteScreenState extends State<SearchSiteScreen> {
                   ),
                 );
               },
-              itemCount: sites.data.length,
+              itemCount: sites.data!.length,
             ),
           ),
         ),

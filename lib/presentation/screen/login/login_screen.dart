@@ -2,18 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
-import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/screen/login/signup_screen.dart';
 import 'package:flutter_monisite/presentation/screen/nav_bottom_main.dart';
 import 'package:flutter_monisite/presentation/widgets/clip_painter.dart';
-import 'package:flutter_monisite/presentation/widgets/loading_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -33,8 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  AuthBloc authBloc;
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
+  late AuthBloc authBloc;
   var node;
 
   @override
@@ -49,15 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
     node = FocusScope.of(context);
 
     return BlocListener<AuthBloc, AuthState>(
-        cubit: authBloc,
+        bloc: authBloc,
         listener: (context, state) {
           if (state is DoLoginSuccess) {
-            Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-            Get.offAll(NavBottomMain());
+            EasyLoading.showSuccess("Success");
+            Get.offAll(NavBottomMain(
+              indexPage: 0,
+            ));
           } else if (state is DoLoginLoading) {
-            LoadingWidget.showLoadingDialog(context, _keyLoader);
+            EasyLoading.show();
           } else if (state is DoLoginFailed) {
-            Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+            EasyLoading.dismiss();
             Fluttertoast.showToast(
                 msg: state.message,
                 toastLength: Toast.LENGTH_SHORT,
@@ -151,9 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.grey),
                             borderRadius: BorderRadius.circular(20)),
-                        child: FlatButton(
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                        child: TextButton(
                           onPressed: () {
                             Get.to(SignUpPage());
                           },
@@ -199,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: TextFormField(
           obscureText: _obscureText,
           controller: _password,
-          validator: (value) => _validator(value, 'password'),
+          validator: (value) => _validator(value!, 'password'),
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock, color: ColorHelpers.colorBlue),
             suffixIcon: GestureDetector(
@@ -236,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         child: TextFormField(
           controller: _email,
-          validator: (value) => _validator(value, 'email'),
+          validator: (value) => _validator(value!, 'email'),
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
           onEditingComplete: () => node.nextFocus(),
@@ -265,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget showPrimaryButton() {
     return InkWell(
       onTap: () {
-        if (formKey.currentState.validate()) {
+        if (formKey.currentState!.validate()) {
           authBloc.add(DoLogin(_email.text, _password.text));
         }
       },

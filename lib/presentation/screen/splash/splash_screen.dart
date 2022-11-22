@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SplashScreen extends StatelessWidget {
   static const String id = "splash_screen";
 
   @override
   Widget build(BuildContext context) {
-    var colorBlueAccent;
     return Scaffold(
         backgroundColor: Colors.white,
         body: Stack(

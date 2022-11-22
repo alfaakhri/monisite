@@ -8,20 +8,20 @@ class DetailPageNotif extends StatefulWidget {
   final String itemId;
   final Map<String, MessageBean> items;
 
-  const DetailPageNotif({Key key, this.itemId, this.items}) : super(key: key);
+  const DetailPageNotif({Key? key, required this.itemId, required this.items}) : super(key: key);
 
   @override
   _DetailPageNotif createState() => _DetailPageNotif();
 }
 
 class _DetailPageNotif extends State<DetailPageNotif> {
-  MessageBean _item;
-  StreamSubscription<MessageBean> _subscription;
+  late MessageBean _item;
+  late StreamSubscription<MessageBean> _subscription;
 
   @override
   void initState() {
     super.initState();
-    _item = widget.items[widget.itemId];
+    _item = widget.items[widget.itemId]!;
     _subscription = _item.onChanged.listen((MessageBean item) {
       if (!mounted) {
         _subscription.cancel();

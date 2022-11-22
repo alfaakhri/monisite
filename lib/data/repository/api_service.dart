@@ -1,12 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_monisite/core/components/Failure.dart';
 import 'dart:io';
 
-import 'package:flutter_monisite/data/models/site/site.dart';
 import 'package:uuid/uuid.dart';
 
 const BASE_URL = "https://api.toragasolusi.com";
@@ -15,7 +12,7 @@ class ApiService {
   String clusterName = "Bekasi";
   final JsonDecoder _decoder = new JsonDecoder();
   Dio _dio = Dio();
-  Response response;
+  late Response response;
 
   Future<Response> getSitesNew(String token) async {
     print("TOKEN $token");
@@ -24,22 +21,22 @@ class ApiService {
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
-        return e.response;
+      if (e.response!.statusCode == 401) {
+        return e.response!;
       } else {
         throw e;
       }
     }
   }
 
-  Future<Response> getSitesBySearch(String result, String token) async {
+  Future<Response?> getSitesBySearch(String result, String token) async {
     print("TOKEN $token");
     try {
       final response = await _dio.get(BASE_URL + "/api/v1/site?search=$result",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response!.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -54,10 +51,8 @@ class ApiService {
               options: Options(headers: {"Authorization": "Bearer $token"}))
           .then((response) {
         final String res = response.data;
-        final int statusCode = response.statusCode;
 
-        print("res: " + res + " statusCode: " + statusCode.toString());
-        if (statusCode < 200 || statusCode > 400 || json == null) {
+        if (response.statusCode! < 200 || response.statusCode! > 400) {
           throw new Failure("Error while fetching data");
         }
         return _decoder.convert(res);
@@ -69,14 +64,14 @@ class ApiService {
     }
   }
 
-  Future<Response> getSiteByID(int id, String token) async {
+  Future<Response?> getSiteByID(int id, String token) async {
     try {
       final response = await _dio.get(
           BASE_URL + "/api/v1/monitor?site_id=$id&last=true",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response!.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -84,7 +79,7 @@ class ApiService {
     }
   }
 
-  Future<Response> getReportMonitor(
+  Future<Response?> getReportMonitor(
       int id, String fromDate, String toDate, String token) async {
     try {
       final response = await _dio.get(
@@ -93,7 +88,7 @@ class ApiService {
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -101,7 +96,7 @@ class ApiService {
     }
   }
 
-  Future<Response> getReportListMonitor(int id, String fromDate, String toDate,
+  Future<Response?> getReportListMonitor(int id, String fromDate, String toDate,
       String token, int pageIndex) async {
     try {
       final response = await _dio.get(
@@ -110,7 +105,7 @@ class ApiService {
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -118,13 +113,13 @@ class ApiService {
     }
   }
 
-  Future<Response> getListNotification(String token) async {
+  Future<Response?> getListNotification(String token) async {
     try {
       final response = await _dio.get(BASE_URL + "/api/v1/notification",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -132,14 +127,14 @@ class ApiService {
     }
   }
 
-  Future<Response> postAcceptNotif(int notifId, String token) async {
+  Future<Response?> postAcceptNotif(int notifId, String token) async {
     try {
       final response = await _dio.post(
           BASE_URL + "/api/v1/acceptNotif/$notifId",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -147,7 +142,7 @@ class ApiService {
     }
   }
 
-  Future<Response> postHistoryProcess(
+  Future<Response?> postHistoryProcess(
       int notifId, int status, String token) async {
     try {
       final response = await _dio.post(BASE_URL + "/api/v1/fixNotif/$notifId",
@@ -155,7 +150,7 @@ class ApiService {
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -174,14 +169,14 @@ class ApiService {
     }
   }
 
-  Future<Response> getAuthentication(String token) async {
+  Future<Response?> getAuthentication(String token) async {
     try {
       response = await _dio.get(BASE_URL + "/api/v1/profile",
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -189,7 +184,7 @@ class ApiService {
     }
   }
 
-  Future<Response> addTokenFirebase(String token, String tokenFirebase) async {
+  Future<Response?> addTokenFirebase(String token, String tokenFirebase) async {
     try {
       response = await _dio.post(BASE_URL + "/api/v1/addToken",
           options: Options(headers: {"Authorization": "Bearer $token"}),
@@ -197,7 +192,7 @@ class ApiService {
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -205,7 +200,7 @@ class ApiService {
     }
   }
 
-  Future<Response> updatePhotoProfile(String token, File data) async {
+  Future<Response?> updatePhotoProfile(String token, File data) async {
     try {
       var filename = '${Uuid().v1()}.jpg';
       MultipartFile multipartFile =
@@ -218,7 +213,7 @@ class ApiService {
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -226,14 +221,14 @@ class ApiService {
     }
   }
 
-  Future<Response> getLogout(String token) async {
+  Future<Response?> getLogout(String token) async {
     try {
       response = await _dio.post(BASE_URL + "/api/v1/logout",
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 401) {
+      if (e.response?.statusCode == 401) {
         return e.response;
       } else {
         throw e;
@@ -241,13 +236,13 @@ class ApiService {
     }
   }
 
-  Future<Response> postSignUp(dynamic data) async {
+  Future<Response?> postSignUp(dynamic data) async {
     try {
       response = await _dio.post(BASE_URL + "/api/v1/register", data: data);
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 422) {
+      if (e.response?.statusCode == 422) {
         return e.response;
       } else {
         throw e;
@@ -255,7 +250,7 @@ class ApiService {
     }
   }
 
-  Future<Response> updateUser(dynamic data, String token, int idUser) async {
+  Future<Response?> updateUser(dynamic data, String token, int idUser) async {
     print("edit profil: " + data.toString());
     try {
       response = await _dio.put(BASE_URL + "/api/v1/user/$idUser",
@@ -264,7 +259,7 @@ class ApiService {
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 422) {
+      if (e.response?.statusCode == 422) {
         return e.response;
       } else {
         throw e;
@@ -272,7 +267,7 @@ class ApiService {
     }
   }
 
-  Future<Response> updatePassword(String newPassword, String cPassword,
+  Future<Response?> updatePassword(String newPassword, String cPassword,
       String oldPassword, String token) async {
     var data = {
       "password": newPassword,
@@ -286,7 +281,7 @@ class ApiService {
 
       return response;
     } on DioError catch (e) {
-      if (e.response.statusCode == 422) {
+      if (e.response?.statusCode == 422) {
         return e.response;
       } else {
         throw e;

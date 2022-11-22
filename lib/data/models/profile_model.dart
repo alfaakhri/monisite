@@ -1,5 +1,5 @@
 class ProfileModel {
-  User user;
+  User? user;
 
   ProfileModel({this.user});
 
@@ -10,25 +10,25 @@ class ProfileModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.user != null) {
-      data['user'] = this.user.toJson();
+      data['user'] = this.user!.toJson();
     }
     return data;
   }
 }
 
 class User {
-  int id;
-  String email;
-  String name;
-  int role;
-  String address;
-  String phoneNumber;
-  String photo;
-  String token;
-  String createdAt;
-  String updatedAt;
-  String emailVerifiedAt;
-  String photoUrl;
+  int? id;
+  String? email;
+  String? name;
+  int? role;
+  String? address;
+  String? phoneNumber;
+  String? photo;
+  String? token;
+  String? createdAt;
+  String? updatedAt;
+  String? emailVerifiedAt;
+  String? photoUrl;
 
   User(
       {this.id,

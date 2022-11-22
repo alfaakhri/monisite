@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/data/models/profile_model.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
-import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/constants.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
@@ -10,7 +9,6 @@ import 'package:flutter_monisite/presentation/screen/login/login_screen.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
 import 'change_pass_screen.dart';
@@ -23,13 +21,13 @@ class AccountScreen extends StatefulWidget {
 }
 
 class _AccountScreenState extends State<AccountScreen> {
-  AuthBloc authBloc;
+  late AuthBloc authBloc;
   TextEditingController _nama = TextEditingController();
   TextEditingController _email = TextEditingController();
   TextEditingController _telepon = TextEditingController();
   TextEditingController _alamat = TextEditingController();
   bool _isEdit = false;
-  FocusNode nameFocusNode;
+  late FocusNode nameFocusNode;
 
   @override
   void initState() {
@@ -70,7 +68,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ],
       ),
       body: BlocConsumer<AuthBloc, AuthState>(
-        cubit: authBloc,
+        bloc: authBloc,
         listener: (context, state) {
           if (state is GetAuthFailed) {
             Fluttertoast.showToast(msg: state.message);
@@ -104,10 +102,11 @@ class _AccountScreenState extends State<AccountScreen> {
           if (state is GetAuthLoading) {
             return skeletonLoading();
           } else if (state is GetAuthSuccess) {
-            _nama.text = state.profileModel.user.name;
-            _telepon.text = state.profileModel.user.phoneNumber;
-            _email.text = state.profileModel.user.email;
-            _alamat.text = state.profileModel.user.address;
+            var user = state.profileModel.user!;
+            _nama.text = user.name!;
+            _telepon.text = user.phoneNumber!;
+            _email.text = user.email!;
+            _alamat.text = user.address!;
 
             return _contentAccount(state.profileModel);
           } else if (state is GetAuthFailed) {
@@ -119,25 +118,28 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is EditProfileLoading) {
             return skeletonLoading();
           } else if (state is EditProfileSuccess) {
-            _nama.text = state.profileModel.user.name;
-            _telepon.text = state.profileModel.user.phoneNumber;
-            _email.text = state.profileModel.user.email;
-            _alamat.text = state.profileModel.user.address;
+            var user = state.profileModel.user!;
+            _nama.text = user.name!;
+            _telepon.text = user.phoneNumber!;
+            _email.text = user.email!;
+            _alamat.text = user.address!;
 
             return _contentAccount(state.profileModel);
           } else if (state is EditPhotoProfileLoading) {
             return skeletonLoading();
           } else if (state is EditPhotoProfileSuccess) {
-            _nama.text = state.profileModel.user.name;
-            _telepon.text = state.profileModel.user.phoneNumber;
-            _email.text = state.profileModel.user.email;
-            _alamat.text = state.profileModel.user.address;
+            var user = state.profileModel.user!;
+            _nama.text = user.name!;
+            _telepon.text = user.phoneNumber!;
+            _email.text = user.email!;
+            _alamat.text = user.address!;
             return _contentAccount(state.profileModel);
           } else if (state is EditPhotoProfileCancel) {
-            _nama.text = authBloc.profileModel.user.name;
-            _telepon.text = authBloc.profileModel.user.phoneNumber;
-            _email.text = authBloc.profileModel.user.email;
-            _alamat.text = authBloc.profileModel.user.address;
+            var user = authBloc.profileModel.user!;
+            _nama.text = user.name!;
+            _telepon.text = user.phoneNumber!;
+            _email.text = user.email!;
+            _alamat.text = user.address!;
             return _contentAccount(authBloc.profileModel);
           } else if (state is EditPhotoProfileFailed) {
             return ErrorHandlingWidget(
@@ -164,7 +166,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 ClipRRect(
                     borderRadius: BorderRadius.circular(50),
                     child: Image.network(
-                      profile.user.photoUrl,
+                      profile.user!.photoUrl!,
                       fit: BoxFit.cover,
                       height: 100,
                       width: 100,
@@ -218,7 +220,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user.name,
+                      profile.user!.name!,
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -253,7 +255,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user.email,
+                      profile.user!.email!,
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -288,7 +290,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user.phoneNumber,
+                      profile.user!.phoneNumber!,
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -323,7 +325,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user.address ?? "-",
+                      profile.user!.address!,
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -341,13 +343,12 @@ class _AccountScreenState extends State<AccountScreen> {
                       children: [
                         Expanded(
                             flex: 5,
-                            child: RaisedButton(
+                            child: ElevatedButton(
                               onPressed: () {
                                 setState(() {
                                   _isEdit = false;
                                 });
                               },
-                              color: Colors.red,
                               child: Text(
                                 "Cancel",
                                 style: TextStyle(
@@ -358,10 +359,10 @@ class _AccountScreenState extends State<AccountScreen> {
                         UIHelper.horizontalSpaceSmall,
                         Expanded(
                           flex: 5,
-                          child: RaisedButton(
+                          child: ElevatedButton(
                             onPressed: () {
                               authBloc.add(EditProfile(
-                                  authBloc.profileModel.user.id,
+                                  authBloc.profileModel.user!.id!,
                                   _nama.text,
                                   _email.text,
                                   _telepon.text,
@@ -373,7 +374,6 @@ class _AccountScreenState extends State<AccountScreen> {
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold),
                             ),
-                            color: Colors.lightGreen,
                           ),
                         )
                       ],

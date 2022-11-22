@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
-import 'package:flutter_monisite/external/constants.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 
 class ContainerSensor extends StatelessWidget {
@@ -10,7 +9,7 @@ class ContainerSensor extends StatelessWidget {
   final String unit;
 
   const ContainerSensor(
-      {Key key, this.iconData, this.title, this.data, this.unit})
+      {Key? key, required this.iconData, required this.title, required this.data, required this.unit})
       : super(key: key);
 
   @override

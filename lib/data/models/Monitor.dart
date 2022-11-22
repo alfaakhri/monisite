@@ -1,19 +1,19 @@
 class Monitor {
-  int monitorId;
-  int fkSite;
-  String volt1;
-  String volt2;
-  String volt3;
-  String volt4;
-  String volt5;
-  String volt6;
-  String curr1;
-  String curr2;
-  String curr3;
-  String currAirCon;
-  String pressure;
-  String temperature;
-  String dateTime;
+  int? monitorId;
+  int? fkSite;
+  String? volt1;
+  String? volt2;
+  String? volt3;
+  String? volt4;
+  String? volt5;
+  String? volt6;
+  String? curr1;
+  String? curr2;
+  String? curr3;
+  String? currAirCon;
+  String? pressure;
+  String? temperature;
+  String? dateTime;
 
   Monitor(
       {this.monitorId,

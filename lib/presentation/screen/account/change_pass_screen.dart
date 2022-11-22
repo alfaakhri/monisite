@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
-import 'package:flutter_monisite/presentation/widgets/loading_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
@@ -14,15 +14,14 @@ class ChangePassScreen extends StatefulWidget {
 
 class _ChangePassScreenState extends State<ChangePassScreen> {
   final formKey = new GlobalKey<FormState>();
-  AuthBloc authBloc;
+  late AuthBloc authBloc;
   TextEditingController newPassword = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
   TextEditingController oldPassword = TextEditingController();
 
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   String txtNewPass = "";
-  String txtConfirmPass;
-  String txtOldPass;
+  late String txtConfirmPass;
+  late String txtOldPass;
   bool _obsecureNewPass = false;
   bool _obsecureConfirmPass = false;
   bool _obsecureOldPass = false;
@@ -60,24 +59,21 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
         body: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is ChangePasswordLoading) {
-              LoadingWidget.showLoadingDialog(context, _keyLoader);
+              EasyLoading.show();
             } else if (state is ChangePasswordFailed) {
-              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                  .pop();
+              EasyLoading.dismiss();
               Fluttertoast.showToast(msg: state.message);
             } else if (state is ChangePasswordMatch) {
-              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                  .pop();
+              EasyLoading.dismiss();
               oldPassword.clear();
               newPassword.clear();
               confirmPassword.clear();
               authBloc.add(GetAuthentication());
               Get.back();
-              Fluttertoast.showToast(msg: state.response.message);
+              Fluttertoast.showToast(msg: state.response.message!);
             } else if (state is ChangePasswordNotMatch) {
-              Navigator.of(_keyLoader.currentContext, rootNavigator: true)
-                  .pop();
-              Fluttertoast.showToast(msg: state.response.message);
+              EasyLoading.dismiss();
+              Fluttertoast.showToast(msg: state.response.message!);
             }
           },
           child: Padding(
@@ -98,9 +94,9 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                       });
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value?.isEmpty ?? false) {
                         return 'Harap mengisi kata sandi lama';
-                      } else if (value.length < 6 && value.length > 0) {
+                      } else if (value!.length < 6 && value.length > 0) {
                         return "Kurang dari 6 karakter";
                       }
                       return null;
@@ -148,9 +144,9 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                       });
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value?.isEmpty ?? false) {
                         return 'Harap mengisi kata sandi baru';
-                      } else if (value.length < 6 && value.length > 0) {
+                      } else if (value!.length < 6 && value.length > 0) {
                         return "Kurang dari 6 karakter";
                       }
                       return null;
@@ -199,7 +195,7 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                       });
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value?.isEmpty ?? false) {
                         return 'Harap mengisi konfirmasi kata sandi';
                       } else if (value != newPassword.text) {
                         return 'Kata sandi tidak cocok';
@@ -239,12 +235,11 @@ class _ChangePassScreenState extends State<ChangePassScreen> {
                   UIHelper.verticalSpaceMedium,
                   Container(
                     width: double.infinity,
-                    child: RaisedButton(
-                      color: ColorHelpers.colorGreen,
+                    child: ElevatedButton(
                       onPressed: () {
                         FocusScope.of(context).requestFocus(new FocusNode());
 
-                        if (formKey.currentState.validate()) {
+                        if (formKey.currentState!.validate()) {
                           authBloc.add(ChangePassword(newPassword.text,
                               confirmPassword.text, oldPassword.text));
                         }

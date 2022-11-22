@@ -1,15 +1,15 @@
 import 'monitor_model.dart';
 
 class ReportMonitorModel {
-  int currentPage;
-  List<DataMonitor> data;
-  String firstPageUrl;
-  int from;
-  String nextPageUrl;
-  String path;
-  String perPage;
-  String prevPageUrl;
-  int to;
+  int? currentPage;
+  List<DataMonitor>? data;
+  String? firstPageUrl;
+  int? from;
+  String? nextPageUrl;
+  String? path;
+  String? perPage;
+  String? prevPageUrl;
+  int? to;
 
   ReportMonitorModel(
       {this.currentPage,
@@ -25,9 +25,9 @@ class ReportMonitorModel {
   ReportMonitorModel.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      data = new List<DataMonitor>();
+      data = <DataMonitor>[];
       json['data'].forEach((v) {
-        data.add(new DataMonitor.fromJson(v));
+        data!.add(new DataMonitor.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -43,7 +43,7 @@ class ReportMonitorModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['current_page'] = this.currentPage;
     if (this.data != null) {
-      data['data'] = this.data.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
     data['first_page_url'] = this.firstPageUrl;
     data['from'] = this.from;

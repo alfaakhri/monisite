@@ -1,8 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_monisite/external/service/firebase_service.dart';
-import 'package:flutter_monisite/core/components/Failure.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/presentation/screen/root_page.dart';
 import 'package:get/get.dart';
@@ -11,14 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
 class AuthProvider extends ChangeNotifier {
-  FirebaseService _auth = FirebaseService();
   ApiService _apiService = ApiService();
 
   AuthProvider.instance() {
     checkLoggedIn();
   }
 
-  String _failure;
+  String _failure = "";
   String get failure => _failure;
   void setFailure(String message) {
     _failure = failure;
@@ -32,7 +28,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _userid;
+  String _userid = "";
   String getUserId() {
     return _userid;
   }
@@ -43,20 +39,20 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void getToken() async{
-    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
-    await _firebaseMessaging.getToken().then((String token) {
+    await _firebaseMessaging.getToken().then((String? token) {
       assert(token != null);
-      print("ini token " + token);
+      print("ini token " + token!);
     });
   }
 
-  Future<bool> doLogin(String email, String password) {
+  Future<bool?> doLogin(String email, String password) async {
     print("email1: $email");
     try {
       setStatus(Status.Authenticating);
       notifyListeners();
-      return _apiService.postLogin(email, password).then((dynamic res) {
+      await _apiService.postLogin(email, password).then((dynamic res) {
         print(res["uuid"]);
         if (res == null) {
           setStatus(Status.Unauthenticated);
@@ -80,7 +76,9 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       setStatus(Status.Unauthenticated);
       notifyListeners();
+      return false;
     }
+    return null;
   }
 
   Future doLogout(BuildContext context) async {

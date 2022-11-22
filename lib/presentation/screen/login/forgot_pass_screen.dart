@@ -55,14 +55,16 @@ class _ForgotPassScreen extends State<ForgotPassScreen> {
                           'Forget Password',
                           style: TextStyle(
                             fontSize: 16.0,
-                          ),),
+                          ),
+                        ),
                         SizedBox(
                           height: 8.0,
                         ),
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           textAlign: TextAlign.left,
-                          decoration: inputDecorationPlusIconStyle("Email", Icon(Icons.mail)),
+                          decoration: inputDecorationPlusIconStyle(
+                              "Email", Icon(Icons.mail)),
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -78,10 +80,7 @@ class _ForgotPassScreen extends State<ForgotPassScreen> {
                           margin: EdgeInsets.symmetric(vertical: 10.0),
                           child: Material(
                             elevation: 5.0,
-                            child: RaisedButton(
-                              color: Colors.blueAccent,
-                              materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
+                            child: ElevatedButton(
                               onPressed: () {},
                               child: Text(
                                 'Submit',

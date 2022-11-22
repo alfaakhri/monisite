@@ -37,7 +37,7 @@ InputDecoration inputDecorationDropdownStyle(String text) {
 
   InputDecoration inputDecorationStyle(String text) {
     return InputDecoration(
-        labelText: "${text}",
+        labelText: text,
         labelStyle: TextStyle(color: Colors.black),
         isDense: true,
         focusedBorder:

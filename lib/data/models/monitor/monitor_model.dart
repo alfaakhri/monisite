@@ -1,7 +1,7 @@
 class MonitorModel {
-  bool success;
-  String message;
-  DataMonitor data;
+  bool? success;
+  String? message;
+  DataMonitor? data;
 
   MonitorModel({this.success, this.message, this.data});
 
@@ -16,46 +16,46 @@ class MonitorModel {
     data['success'] = this.success;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data?.toJson();
     }
     return data;
   }
 }
 
 class DataMonitor {
-  int id;
-  int siteId;
-  int alarmId;
-  int type;
-  String teganganRs;
-  String teganganRt;
-  String teganganSt;
-  String teganganRn;
-  String teganganSn;
-  String teganganTn;
-  String arusR;
-  String arusS;
-  String arusT;
-  String arusAc;
-  String temperature;
-  String pressure;
-  String createdAt;
-  String code;
-  String siteName;
-  String siteType;
-  String towerType;
-  String towerHeight;
-  String tenantOm;
-  String tp;
-  String latitude;
-  String longitude;
-  String address;
-  int clusterId;
-  int categoryId;
-  int btsId;
-  String categoryName;
-  String clusterName;
-  String btsPosition;
+  int? id;
+  int? siteId;
+  int? alarmId;
+  int? type;
+  String? teganganRs;
+  String? teganganRt;
+  String? teganganSt;
+  String? teganganRn;
+  String? teganganSn;
+  String? teganganTn;
+  String? arusR;
+  String? arusS;
+  String? arusT;
+  String? arusAc;
+  String? temperature;
+  String? pressure;
+  String? createdAt;
+  String? code;
+  String? siteName;
+  String? siteType;
+  String? towerType;
+  String? towerHeight;
+  String? tenantOm;
+  String? tp;
+  String? latitude;
+  String? longitude;
+  String? address;
+  int? clusterId;
+  int? categoryId;
+  int? btsId;
+  String? categoryName;
+  String? clusterName;
+  String? btsPosition;
 
   DataMonitor(
       {this.id,

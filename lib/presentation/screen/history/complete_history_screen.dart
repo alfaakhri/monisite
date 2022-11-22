@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/data/models/notification/notification_model.dart';
-import 'package:flutter_monisite/data/models/site/site.dart';
-import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/domain/bloc/notif_bloc/notif_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
@@ -14,7 +12,7 @@ class CompleteHistoryScreen extends StatefulWidget {
 }
 
 class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
-  NotifBloc notifBloc;
+  late NotifBloc notifBloc;
 
   @override
   void initState() {
@@ -26,9 +24,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<NotifBloc, NotifState>(
-      listener: (context, state) {
-        // TODO: implement listener
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         if (state is GetListNotifFailed) {
           return ErrorHandlingWidget(
@@ -65,7 +61,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: ListView(
-        children: notif.data.map((element) {
+        children: notif.data!.map((element) {
           return Column(
             children: [
               Container(
@@ -80,7 +76,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
                             children: <Widget>[
                               Container(
                                 child: Text(
-                                  element.siteName,
+                                  element.siteName ?? "",
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold),
@@ -88,13 +84,13 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
                               ),
                               UIHelper.verticalSpaceSmall,
                               Text(
-                                "Tenant OM: " + element.tenantOm,
+                                "Tenant OM: ${element.tenantOm ?? ""}",
                                 style: TextStyle(fontSize: 12),
                               ),
                               UIHelper.verticalSpaceVerySmall,
                               Container(
                                   child: Text(
-                                element.address,
+                                element.address ?? "",
                                 maxLines: 3,
                                 style: TextStyle(fontSize: 12),
                               )),
@@ -108,7 +104,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    element.title,
+                                    element.title ?? "",
                                     style: TextStyle(
                                         color: (element.status == 2)
                                             ? ColorHelpers.colorGreen
@@ -125,7 +121,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    element.acceptTime ?? "-",
+                                    element.acceptTime ?? '',
                                     style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold),
@@ -142,7 +138,7 @@ class _CompleteHistoryScreenState extends State<CompleteHistoryScreen> {
                                     style: TextStyle(fontSize: 12),
                                   ),
                                   Text(
-                                    element.fixingTime,
+                                    element.fixingTime ?? "",
                                     style: TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold),

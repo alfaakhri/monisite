@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +10,7 @@ import 'package:flutter_monisite/data/models/response_update_password.dart';
 import 'package:flutter_monisite/data/models/token_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/external/service/firebase_service.dart';
-import 'package:flutter_monisite/external/service/image_picker_service.dart';
 import 'package:flutter_monisite/external/service/shared_preference_service.dart';
-import 'package:meta/meta.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -30,14 +27,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _tokenModel = tokenModel;
   }
 
-  String _token;
-  String get token => _token;
+  String? _token = '';
+  String get token => _token ?? '';
   void setToken(String token) {
     _token = token;
   }
 
-  String _tokenFirebase;
-  String get tokenFirebase => _tokenFirebase;
+  String? _tokenFirebase = "";
+  String get tokenFirebase => _tokenFirebase ?? "";
   void setTokenFirebase(String tokenFirebase) {
     _tokenFirebase = tokenFirebase;
   }
@@ -48,7 +45,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _profileModel = profileModel;
   }
 
-  @override
   Stream<AuthState> mapEventToState(
     AuthEvent event,
   ) async* {
@@ -61,15 +57,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (_token == null) {
           yield GetAuthFailed("Login terlebih dahulu");
         } else {
-          var response = await _apiService.getAuthentication(_token);
-          if (response.statusCode == 200) {
+          var response = await _apiService.getAuthentication(_token!);
+          if (response?.statusCode == 200) {
             _tokenFirebase = await _firebaseService.getToken();
             print("TOKEN FIREBASE $_tokenFirebase");
-            var responseToken =
-                await _apiService.addTokenFirebase(_token, _tokenFirebase);
-            _profileModel = ProfileModel.fromJson(response.data);
+            await _apiService
+                .addTokenFirebase(_token!, _tokenFirebase!)
+                .then((value) {
+              _profileModel = ProfileModel.fromJson(response?.data);
+            });
             yield GetAuthSuccess(_profileModel);
-          } else if (response.statusCode == 401) {
+          } else if (response?.statusCode == 401) {
             yield GetAuthMustLogin();
           } else {
             yield GetAuthFailed("Login terlebih dahulu");
@@ -88,11 +86,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           if (_tokenModel.success == false) {
             yield DoLoginFailed("Email atau password salah");
           } else {
-            _sharedPreferenceService.saveToken(_tokenModel.token);
+            _sharedPreferenceService.saveToken(_tokenModel.token!);
             _tokenFirebase = await _firebaseService.getToken();
             print("TOKEN FIREBASE $_tokenFirebase");
-            var responseToken = await _apiService.addTokenFirebase(
-                _tokenModel.token, _tokenFirebase);
+            await _apiService.addTokenFirebase(
+                _tokenModel.token!, _tokenFirebase!);
             yield DoLoginSuccess();
           }
         } else {
@@ -103,7 +101,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } else if (event is DoLogout) {
       var response = await _apiService.getLogout(token);
-      if (response.statusCode == 200) {
+      if (response?.statusCode == 200) {
         _sharedPreferenceService.deleteTokenModel();
         _token = null;
         yield DoLogoutSuccess();
@@ -124,19 +122,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         print(data.toJson());
 
         var response = await _apiService.postSignUp(json.encode(data.toJson()));
-        if (response.statusCode == 200) {
+        if (response?.statusCode == 200) {
           RegistrationResponse registration =
-              RegistrationResponse.fromJson(response.data);
-          _sharedPreferenceService.saveToken(registration.token);
+              RegistrationResponse.fromJson(response?.data);
+          _sharedPreferenceService.saveToken(registration.token!);
           _tokenFirebase = await _firebaseService.getToken();
           print("TOKEN FIREBASE $_tokenFirebase");
-          var responseToken = await _apiService.addTokenFirebase(
-              registration.token, _tokenFirebase);
+          await _apiService.addTokenFirebase(
+              registration.token!, _tokenFirebase!);
           yield PostSignupSuccess();
-        } else if (response.statusCode == 422) {
+        } else if (response?.statusCode == 422) {
           RegistrationResponse registration =
-              RegistrationResponse.fromJson(response.data);
-          yield PostSignupFailed(registration.email.first);
+              RegistrationResponse.fromJson(response?.data);
+          yield PostSignupFailed(registration.email!.first);
         } else {
           yield PostSignupFailed("Something wrong, please try again.");
         }
@@ -157,17 +155,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         };
         var response = await _apiService.updateUser(
             json.encode(data), token, event.idUser);
-        if (response.statusCode == 200) {
-          if (response.data['success'] == true) {
-            var response = await _apiService.getAuthentication(_token);
-            if (response.statusCode == 200) {
+        if (response?.statusCode == 200) {
+          if (response?.data['success'] == true) {
+            var response = await _apiService.getAuthentication(_token!);
+            if (response?.statusCode == 200) {
               _tokenFirebase = await _firebaseService.getToken();
               print("TOKEN FIREBASE $_tokenFirebase");
-              var responseToken =
-                  await _apiService.addTokenFirebase(_token, _tokenFirebase);
-              _profileModel = ProfileModel.fromJson(response.data);
+              
+                  await _apiService.addTokenFirebase(_token!, _tokenFirebase!);
+              _profileModel = ProfileModel.fromJson(response?.data);
               yield EditProfileSuccess(_profileModel);
-            } else if (response.statusCode == 401) {
+            } else if (response?.statusCode == 401) {
               yield GetAuthMustLogin();
             } else {
               yield GetAuthFailed("Login terlebih dahulu");
@@ -182,38 +180,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         yield EditProfileFailed(e.toString());
       }
     } else if (event is EditPhotoProfile) {
-      var image =
-          await ImagePickerService().dialogImageEditProfil(event.context);
+      // File? image =
+      //     await ImagePickerService().dialogImageEditProfil(event.context);
 
-      File _image = image;
-      print('Image Path $_image');
+      // print('Image Path $image');
 
-      if (_image != null) {
-        print("Ukuran : " + _image.lengthSync().toString());
-        if (_image.lengthSync() >= 5000000) {
-          yield EditPhotoProfileMaxSize();
-        }
-        try {
-          var response = await _apiService.updatePhotoProfile(token, _image);
-          if (response.statusCode == 200) {
-            var responseAuth = await _apiService.getAuthentication(_token);
-            if (responseAuth.statusCode == 200) {
-              _profileModel = ProfileModel.fromJson(responseAuth.data);
-              yield EditProfileSuccess(_profileModel);
-            } else if (responseAuth.statusCode == 401) {
-              yield GetAuthMustLogin();
-            } else {
-              yield GetAuthFailed("Login terlebih dahulu");
-            }
-          } else {
-            yield EditPhotoProfileFailed("Failed update photo profile");
-          }
-        } catch (e) {
-          yield EditPhotoProfileFailed(e.toString());
-        }
-      } else {
-        yield EditPhotoProfileCancel();
-      }
+      // if (image != null) {
+      //   print("Ukuran : " + image.lengthSync().toString());
+      //   if (image.lengthSync() >= 5000000) {
+      //     yield EditPhotoProfileMaxSize();
+      //   }
+      //   try {
+      //     var response = await _apiService.updatePhotoProfile(token, image);
+      //     if (response?.statusCode == 200) {
+      //       var responseAuth = await _apiService.getAuthentication(_token!);
+      //       if (responseAuth?.statusCode == 200) {
+      //         _profileModel = ProfileModel.fromJson(responseAuth?.data);
+      //         yield EditProfileSuccess(_profileModel);
+      //       } else if (responseAuth?.statusCode == 401) {
+      //         yield GetAuthMustLogin();
+      //       } else {
+      //         yield GetAuthFailed("Login terlebih dahulu");
+      //       }
+      //     } else {
+      //       yield EditPhotoProfileFailed("Failed update photo profile");
+      //     }
+      //   } catch (e) {
+      //     yield EditPhotoProfileFailed(e.toString());
+      //   }
+      // } else {
+      //   yield EditPhotoProfileCancel();
+      // }
     } else if (event is ChangePassword) {
       yield ChangePasswordLoading();
       try {
@@ -223,11 +220,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           _token = tokenNew;
           var response = await _apiService.updatePassword(
-              event.newPassoword, event.cPassword, event.oldPassword, _token);
-          if (response.statusCode == 200) {
+              event.newPassoword, event.cPassword, event.oldPassword, _token!);
+          if (response?.statusCode == 200) {
             ResponseUpdatePassword responseUpdate = ResponseUpdatePassword();
-            responseUpdate = ResponseUpdatePassword.fromJson(response.data);
-            if (responseUpdate.success) {
+            responseUpdate = ResponseUpdatePassword.fromJson(response?.data);
+            if (responseUpdate.success ?? false) {
               yield ChangePasswordMatch(responseUpdate);
             } else
               yield ChangePasswordNotMatch(responseUpdate);

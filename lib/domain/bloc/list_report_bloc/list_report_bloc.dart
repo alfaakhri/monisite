@@ -18,16 +18,15 @@ class ListReportBloc extends Bloc<ListReportEvent, ListReportState> {
   ReportMonitorModel _listReport = ReportMonitorModel();
   ReportMonitorModel get listReport => _listReport;
   void setListReport(List<DataMonitor> listReport) {
-    _listReport.data.addAll(listReport);
+    _listReport.data?.addAll(listReport);
   }
 
-  String _token;
+  String _token = "";
   String get token => _token;
   void setToken(String token) {
     _token = token;
   }
 
-  @override
   Stream<ListReportState> mapEventToState(
     ListReportEvent event,
   ) async* {
@@ -42,19 +41,19 @@ class ListReportBloc extends Bloc<ListReportEvent, ListReportState> {
 
           var response = await _apiService.getReportListMonitor(event.siteId,
               event.fromDate, event.toDate, _token, event.pageIndex);
-          if (response.statusCode == 200) {
-            _listReport.data = null;
+          if (response?.statusCode == 200) {
+            _listReport.data!.clear();
             ReportMonitorModel tempList =
-                ReportMonitorModel.fromJson(response.data);
-            if (_listReport.data == null || _listReport.data.length == 0) {
+                ReportMonitorModel.fromJson(response?.data);
+            if (_listReport.data?.length == 0) {
               _listReport = tempList;
-              if (_listReport.data == null || _listReport.data.length == 0) {
+              if (_listReport.data?.length == 0) {
                 yield GetListReportEmpty();
               } else {
                 yield GetListReportSuccess(_listReport);
               }
             } else {
-              _listReport.data.addAll(tempList.data);
+              _listReport.data?.addAll(tempList.data!);
               yield GetListReportSuccess(_listReport);
             }
           } else {

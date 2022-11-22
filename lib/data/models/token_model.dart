@@ -1,11 +1,12 @@
 class TokenModel {
-  String token;
-  String tokenType;
-  int expiresIn;
-  bool success;
-  String message;
+  String? token;
+  String? tokenType;
+  int? expiresIn;
+  bool? success;
+  String? message;
 
-  TokenModel({this.token, this.tokenType, this.expiresIn, this.success, this.message});
+  TokenModel(
+      {this.token, this.tokenType, this.expiresIn, this.success, this.message});
 
   TokenModel.fromJson(Map<String, dynamic> json) {
     token = json['token'];

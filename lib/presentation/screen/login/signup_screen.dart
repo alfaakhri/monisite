@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/widgets/clip_painter.dart';
-import 'package:flutter_monisite/presentation/widgets/loading_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +25,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController nama = TextEditingController();
   TextEditingController phone = TextEditingController();
 
-  AuthBloc authBloc;
+  late AuthBloc authBloc;
   final formKey = new GlobalKey<FormState>();
 
   String txtEmail = "";
@@ -35,7 +35,6 @@ class _SignUpPageState extends State<SignUpPage> {
 
   bool _obscureText = true;
   bool _obscureText1 = true;
-  bool _checkPassword = true;
 
   _validator(String value, String textWarning) {
     if (value.isEmpty) {
@@ -45,7 +44,6 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   var node;
-  final GlobalKey<State> _keyLoader = new GlobalKey<State>();
 
   @override
   void initState() {
@@ -60,16 +58,19 @@ class _SignUpPageState extends State<SignUpPage> {
 
     return Scaffold(
         body: BlocListener<AuthBloc, AuthState>(
-      cubit: authBloc,
+      bloc: authBloc,
       listener: (context, state) {
         if (state is PostSignupLoading) {
-          LoadingWidget.showLoadingDialog(context, _keyLoader);
+          EasyLoading.show();
         } else if (state is PostSignupSuccess) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
-          Fluttertoast.showToast(msg: "Registration Success!");
-          Get.offAll(NavBottomMain());
+          EasyLoading.showSuccess("Registration Success!");
+
+          Get.offAll(NavBottomMain(
+            indexPage: 0,
+          ));
         } else if (state is PostSignupFailed) {
-          Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
+          EasyLoading.dismiss();
+
           Fluttertoast.showToast(msg: state.message);
         }
       },
@@ -179,7 +180,7 @@ class _SignUpPageState extends State<SignUpPage> {
             keyboardType: textInputType,
             textInputAction: TextInputAction.next,
             onEditingComplete: () => node.nextFocus(),
-            validator: (value) => _validator(value, label),
+            validator: (value) => _validator(value!, label),
             decoration: _decorationFormRegister(icons, label)),
       ),
     );
@@ -195,10 +196,10 @@ class _SignUpPageState extends State<SignUpPage> {
               textInputAction: TextInputAction.next,
               onEditingComplete: () => node.nextFocus(),
               validator: (value) {
-                if (value.isEmpty) {
+                if (value?.isEmpty ?? false) {
                   return 'Harap mengisi email';
                 } else {
-                  if (value.contains("@")) {
+                  if (value?.contains("@") ?? false) {
                     return null;
                   } else {
                     return "Format email salah";
@@ -226,10 +227,10 @@ class _SignUpPageState extends State<SignUpPage> {
           textInputAction: TextInputAction.next,
           onEditingComplete: () => node.nextFocus(),
           validator: (value) {
-            if (value.isEmpty) {
+            if (value?.isEmpty ?? false) {
               return 'Harap mengisi kata sandi';
             } else {
-              if (value.length >= 6) {
+              if (value!.length >= 6) {
                 return null;
               } else {
                 return 'Kata sandi minimal 6 karakter';
@@ -280,7 +281,7 @@ class _SignUpPageState extends State<SignUpPage> {
           obscureText: _obscureText1,
           controller: confirmPassword,
           validator: (value) {
-            if (value.isEmpty) {
+            if (value?.isEmpty ?? false) {
               return 'Harap mengisi konfirmasi kata sandi';
             } else {
               if (txtPassword == txtConfirmPassword) {
@@ -292,13 +293,6 @@ class _SignUpPageState extends State<SignUpPage> {
           },
           onChanged: (val) {
             txtConfirmPassword = val;
-            setState(() {
-              if (txtPassword == txtConfirmPassword) {
-                _checkPassword = true;
-              } else {
-                _checkPassword = false;
-              }
-            });
           },
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.lock, color: ColorHelpers.colorBlue),
@@ -333,7 +327,7 @@ class _SignUpPageState extends State<SignUpPage> {
   Widget showPrimaryButton() {
     return InkWell(
       onTap: () {
-        if (formKey.currentState.validate()) {
+        if (formKey.currentState!.validate()) {
           showDialog(
               context: context,
               builder: (context) {

@@ -1,23 +1,18 @@
-import 'dart:async';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:provider/provider.dart';
 import 'account/account_screen.dart' as account;
 import 'history/history_screen.dart' as history;
 import 'home/home_screen.dart' as home;
-import 'home/search_site_screen.dart';
-import 'report/report_screen.dart' as report;
 import 'notification/notification_screen.dart' as notification;
 
 class NavBottomMain extends StatefulWidget {
   final int indexPage;
 
-  const NavBottomMain({Key key, this.indexPage}) : super(key: key);
+  const NavBottomMain({Key? key, required this.indexPage}) : super(key: key);
   @override
   _NavBottomMainState createState() => _NavBottomMainState();
 }
@@ -42,9 +37,7 @@ class _NavBottomMainState extends State<NavBottomMain>
   void initState() { 
     Provider.of<AuthProvider>(context, listen: false).getToken();
     super.initState();
-    if (widget.indexPage != null) {
-      _page = widget.indexPage;
-    }
+    _page = widget.indexPage;
   }
 
   @override

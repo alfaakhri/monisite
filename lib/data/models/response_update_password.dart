@@ -1,6 +1,6 @@
 class ResponseUpdatePassword {
-  bool success;
-  String message;
+  bool? success;
+  String? message;
 
   ResponseUpdatePassword({this.success, this.message});
 

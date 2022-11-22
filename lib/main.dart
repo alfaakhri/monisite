@@ -12,7 +12,6 @@ import 'domain/bloc/notif_bloc/notif_bloc.dart';
 import 'domain/bloc/site_bloc/site_bloc.dart';
 import 'domain/provider/auth_provider.dart';
 import 'domain/provider/notification_provider.dart';
-import 'external/color_helpers.dart';
 
 void main() => runApp(MyApp());
 

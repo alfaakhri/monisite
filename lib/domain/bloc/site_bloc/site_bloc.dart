@@ -4,7 +4,6 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_monisite/data/models/monitor/monitor_model.dart';
 import 'package:flutter_monisite/data/models/monitor/report_monitor_model.dart';
 import 'package:flutter_monisite/data/models/site/list_sites_model.dart';
-import 'package:flutter_monisite/data/models/site/site_by_id_model.dart';
 import 'package:flutter_monisite/data/repository/api_service.dart';
 import 'package:flutter_monisite/external/service/shared_preference_service.dart';
 import 'package:intl/intl.dart';
@@ -42,19 +41,18 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     _reportMonitor = reportMonitor;
   }
 
-  String _status;
+  String _status = "";
   String get status => _status;
   void setStatus(String status) {
     _status = status;
   }
 
-  String _token;
+  String _token = "";
   String get token => _token;
   void setToken(String token) {
     _token = token;
   }
 
-  @override
   Stream<SiteState> mapEventToState(
     SiteEvent event,
   ) async* {
@@ -69,7 +67,7 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           var response = await _apiService.getSitesNew(_token);
           if (response.statusCode == 200) {
             _listSites = ListSitesModel.fromJson(response.data);
-            if (_listSites.data.length == 0 || _listSites.data == null) {
+            if (_listSites.data?.length == 0) {
               yield GetSitesEmpty();
             } else {
               yield GetSitesSuccess(_listSites);
@@ -93,13 +91,13 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           _token = tokenNew;
 
           var response = await _apiService.getSiteByID(event.siteId, _token);
-          if (response.statusCode == 200) {
+          if (response!.statusCode == 200) {
             _dataMonitor = MonitorModel.fromJson(response.data);
-            if (_dataMonitor.success) {
+            if (_dataMonitor.success ?? false) {
               checkStatus(_dataMonitor);
               yield GetSiteByIDSuccess(_dataMonitor);
             } else {
-              yield GetSiteByIDEmpty(_dataMonitor.message);
+              yield GetSiteByIDEmpty(_dataMonitor.message!);
             }
           } else {
             yield GetSiteByIDFailed("Failed get data monitor");
@@ -119,10 +117,9 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           _token = tokenNew;
           var response =
               await _apiService.getSitesBySearch(event.result, _token);
-          if (response.statusCode == 200) {
+          if (response!.statusCode == 200) {
             _sitesResultSearch = ListSitesModel.fromJson(response.data);
-            if (_sitesResultSearch.data == null ||
-                _sitesResultSearch.data.length == 0) {
+            if (_sitesResultSearch.data?.length == 0) {
               yield GetSiteBySearchEmpty();
             } else {
               yield GetSiteBySearchSuccess(_sitesResultSearch);
@@ -149,10 +146,9 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
               DateFormat('yyyy-MM-dd').format(DateTime.parse(event.fromDate)),
               DateFormat('yyyy-MM-dd').format(toDate),
               _token);
-          if (response.statusCode == 200) {
+          if (response!.statusCode == 200) {
             _reportMonitor = ReportMonitorModel.fromJson(response.data);
-            if (_reportMonitor.data == null ||
-                _reportMonitor.data.length == 0) {
+            if (_reportMonitor.data!.length == 0) {
               yield GetReportMonitorEmpty();
             } else {
               yield GetReportMonitorSuccess(_reportMonitor);
@@ -168,33 +164,33 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
   }
 
   void checkStatus(MonitorModel monitor) {
-    if (double.parse(monitor.data.teganganRs) < 100.00 ||
-        double.parse(monitor.data.teganganRs) > 250.00) {
+    if (double.parse(monitor.data!.teganganRs!) < 100.00 ||
+        double.parse(monitor.data!.teganganRs!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.teganganRt) < 100.00 ||
-        double.parse(monitor.data.teganganRt) > 250.00) {
+    } else if (double.parse(monitor.data!.teganganRt!) < 100.00 ||
+        double.parse(monitor.data!.teganganRt!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.teganganSt) < 100.00 ||
-        double.parse(monitor.data.teganganSt) > 250.00) {
+    } else if (double.parse(monitor.data!.teganganSt!) < 100.00 ||
+        double.parse(monitor.data!.teganganSt!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.teganganRn) < 100.00 ||
-        double.parse(monitor.data.teganganRn) > 250.00) {
+    } else if (double.parse(monitor.data!.teganganRn!) < 100.00 ||
+        double.parse(monitor.data!.teganganRn!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.teganganSn) < 100.00 ||
-        double.parse(monitor.data.teganganSn) > 250.00) {
+    } else if (double.parse(monitor.data!.teganganSn!) < 100.00 ||
+        double.parse(monitor.data!.teganganSn!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.teganganTn) < 100.00 ||
-        double.parse(monitor.data.teganganTn) > 250.00) {
+    } else if (double.parse(monitor.data!.teganganTn!) < 100.00 ||
+        double.parse(monitor.data!.teganganTn!) > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.arusR) < 0.00 ||
-        double.parse(monitor.data.arusS) < 0.00 ||
-        double.parse(monitor.data.arusT) < 0.00 ||
-        double.parse(monitor.data.arusAc) < 0.00) {
+    } else if (double.parse(monitor.data!.arusR!) < 0.00 ||
+        double.parse(monitor.data!.arusS!) < 0.00 ||
+        double.parse(monitor.data!.arusT!) < 0.00 ||
+        double.parse(monitor.data!.arusAc!) < 0.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.pressure) < 80.00 ||
-        double.parse(monitor.data.pressure) > 140.00) {
+    } else if (double.parse(monitor.data!.pressure!) < 80.00 ||
+        double.parse(monitor.data!.pressure!) > 140.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data.temperature) > 27.00) {
+    } else if (double.parse(monitor.data!.temperature!) > 27.00) {
       setStatus("Perlu ditinjau");
     } else {
       setStatus("Stabil");

@@ -7,14 +7,14 @@ import 'package:flutter_monisite/core/components/notification/detail_page_notif.
 class MessageBean {
   final String itemId;
   final Map<String, MessageBean> items;
-  MessageBean(this.itemId, this.items);
+  MessageBean({required this.itemId, required this.items});
 
   StreamController<MessageBean> _controller =
       StreamController<MessageBean>.broadcast();
 
   Stream<MessageBean> get onChanged => _controller.stream;
 
-  String _status;
+  String _status = "";
   String get status => _status;
   set status(String value) {
     _status = value;

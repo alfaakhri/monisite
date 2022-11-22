@@ -4,9 +4,7 @@ import 'package:flutter_monisite/data/models/notification/notification_model.dar
 import 'package:flutter_monisite/domain/bloc/notif_bloc/notif_bloc.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
-import 'package:flutter_monisite/presentation/screen/notification/detail_notification_screen.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
@@ -16,8 +14,8 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  NotifBloc notifBloc;
-  String date;
+  late NotifBloc notifBloc;
+  String date = '';
 
   @override
   void initState() {
@@ -79,29 +77,25 @@ class _NotificationScreenState extends State<NotificationScreen> {
   Container _contentListNotif(NotificationModel notif) {
     return Container(
       child: ListView(
-        children: notif.data.map((element) {
+        children: notif.data!.map((element) {
           DataNotification notify = element;
-          var dateOnly = notify.createdAt.split("T")[0];
+          var dateOnly = notify.createdAt!.split("T")[0];
           bool checkDate;
-          if (date == null) {
-            date = dateOnly;
-            checkDate = false;
-            print("dateNull : $date");
+
+          if (date.contains(dateOnly)) {
+            checkDate = true;
+            print("dateTrue : $date");
           } else {
-            if (date.contains(dateOnly)) {
-              checkDate = true;
-              print("dateTrue : $date");
-            } else {
-              checkDate = false;
-              date = dateOnly;
-              print("dateFalse : $date");
-            }
+            checkDate = false;
+            date = dateOnly;
+            print("dateFalse : $date");
           }
+
           return GestureDetector(
             onTap: () {
-              Get.to(DetailNotificationScreen(
-                dataNotification: element,
-              ));
+              // Get.to(DetailNotificationScreen(
+              //   dataNotification: element,
+              // ));
             },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,7 +126,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Container(
-                                child: Text(element.title,
+                                child: Text(element.title ?? "",
                                     style: TextStyle(
                                         color: (element.status == 0)
                                             ? Colors.black
@@ -140,7 +134,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         fontWeight: FontWeight.w700)),
                               ),
                               UIHelper.verticalSpaceVerySmall,
-                              Text(element.body,
+                              Text(element.body ?? "",
                                   maxLines: 2,
                                   style: TextStyle(
                                       color: (element.status == 0)
@@ -151,7 +145,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         ),
                         Text(
                             DateFormat("HH:mm").format(
-                                DateTime.parse(notify.createdAt).toLocal()),
+                                DateTime.parse(notify.createdAt ?? "0")
+                                    .toLocal()),
                             style: TextStyle(
                                 fontSize: 11,
                                 color: (element.status == 0)

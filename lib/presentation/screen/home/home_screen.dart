@@ -22,9 +22,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String status = "Stabil";
-  ScrollController _scrollController;
+  
 
-  SiteBloc siteBloc;
+  late SiteBloc siteBloc;
 
   @override
   void initState() {
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.zero,
             child: ListView.builder(
               itemBuilder: (context, index) {
-                var site = sites.data[index];
+                var site = sites.data![index];
                 return Padding(
                   padding: const EdgeInsets.only(top: 8.0),
                   child: InkWell(
@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-              itemCount: sites.data.length,
+              itemCount: sites.data!.length,
             ),
           ),
         ),

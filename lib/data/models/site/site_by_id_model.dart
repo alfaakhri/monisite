@@ -2,9 +2,9 @@
 import 'package:flutter_monisite/data/models/site/site.dart';
 
 class SiteByIdModel {
-  bool success;
-  String message;
-  Site data;
+  bool? success;
+  String? message;
+  Site? data;
 
   SiteByIdModel({this.success, this.message, this.data});
 
@@ -19,7 +19,7 @@ class SiteByIdModel {
     data['success'] = this.success;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data.toJson();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
