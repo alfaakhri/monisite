@@ -53,14 +53,12 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  late AuthBloc authBloc;
   // final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
   @override
   void initState() {
     super.initState();
-    authBloc = BlocProvider.of<AuthBloc>(context);
-    authBloc.add(StartApp());
+    context.read<AuthBloc>().add(StartApp());
 
     // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     //     FlutterLocalNotificationsPlugin();
@@ -157,8 +155,7 @@ class _RootPageState extends State<RootPage> {
 
     @override
     Widget build(BuildContext context) {
-      return BlocConsumer(
-        bloc: authBloc,
+      return BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is GetAuthSuccess) {
             Get.offAll(NavBottomMain(
