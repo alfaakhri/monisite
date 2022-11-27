@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_monisite/data/models/site/list_sites_model.dart';
 import 'package:flutter_monisite/domain/bloc/site_bloc/site_bloc.dart';
-import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
 import 'package:flutter_monisite/external/ui_helpers.dart';
 import 'package:flutter_monisite/presentation/screen/home/search_site_screen.dart';
@@ -10,7 +9,6 @@ import 'package:flutter_monisite/presentation/screen/login/login_screen.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
 import 'detail_site_monitor_screen.dart';
@@ -28,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    Provider.of<AuthProvider>(context, listen: false).getToken();
+    // Provider.of<AuthProvider>(context, listen: false).getToken();
     siteBloc = BlocProvider.of<SiteBloc>(context);
     siteBloc.add(GetSites());
     super.initState();
@@ -103,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: InkWell(
                     onTap: () {
-                      Get.to(DetailSiteMonitorScreen(siteID: site.id));
+                      Get.to(DetailSiteMonitorScreen(siteID: site.id ?? 0));
                     },
                     child: Card(
                       child: Padding(
@@ -125,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  site.siteName,
+                                  site.siteName ?? "-",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
@@ -138,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Icon(Icons.cloud,
                                         color: Colors.blue, size: 22),
                                     UIHelper.horizontalSpaceVerySmall,
-                                    Text("Tenant OM: " + site.tenantOm),
+                                    Text("Tenant OM: ${site.tenantOm ?? "-"}"),
                                   ],
                                 ),
                                 UIHelper.verticalSpaceVerySmall,
@@ -153,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     UIHelper.horizontalSpaceVerySmall,
                                     Expanded(
                                         child: Text(
-                                      site.address,
+                                      site.address ?? "-",
                                       maxLines: 2,
                                     )),
                                   ],
