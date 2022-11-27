@@ -8,6 +8,7 @@ import 'package:flutter_monisite/presentation/widgets/container_sensor.dart';
 import 'package:flutter_monisite/presentation/widgets/error_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:skeleton_text/skeleton_text.dart';
 
@@ -47,6 +48,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
         if (state is GetSiteByIDLoading) {
           return _skeletonLoading();
         } else if (state is GetSiteByIDSuccess) {
+          
           return _buildDetailHomeScreen(state.dataMonitor, siteBloc.status);
         } else if (state is GetSiteByIDEmpty) {
           return ErrorHandlingWidget(
@@ -354,7 +356,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
                               UIHelper.horizontalSpaceVerySmall,
                               Container(
                                   child: Text(
-                                      "Waktu Terbaru: ${DateTime.parse(monitor.data!.createdAt!).toLocal().toString().split(".")[0]}",
+                                      "Waktu Terbaru: ${DateFormat("dd MMM yyyy HH:mm:ss").format(DateTime.parse(monitor.data!.createdAt!))}",
                                       style: TextStyle(color: Colors.white))),
                             ],
                           ),
@@ -503,7 +505,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.av_timer,
             title: 'Tekanan',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data!.pressure ?? "0").toStringAsFixed(2)}"
+                ? "${monitor.data!.pressure ?? "0"}"
                 : "N/A",
             unit: 'Psi',
           ),
@@ -512,7 +514,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus R',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data?.arusR ?? "0").toStringAsFixed(2)}"
+                ? "${monitor.data?.arusR ?? "0"}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -521,7 +523,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus S',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data?.arusS ?? "0").toStringAsFixed(2)}"
+                ? "${monitor.data?.arusS ?? "0"}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -530,7 +532,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus T',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data?.arusT ?? "0").toStringAsFixed(2)}"
+                ? "${monitor.data?.arusT ?? "0"}"
                 : "N/A",
             unit: 'Ampere',
           ),
@@ -539,7 +541,7 @@ class _DetailSiteMonitorScreenState extends State<DetailSiteMonitorScreen> {
             iconData: Icons.lightbulb_outline,
             title: 'Arus AC',
             data: (monitor.data != null)
-                ? "${double.parse(monitor.data?.arusAc ?? "0").toStringAsFixed(2)}"
+                ? "${monitor.data?.arusAc ?? "0"}"
                 : "N/A",
             unit: 'Ampere',
           ),
