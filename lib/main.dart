@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/presentation/screen/root_page.dart';
 import 'package:get/route_manager.dart';
@@ -13,7 +14,9 @@ import 'domain/bloc/site_bloc/site_bloc.dart';
 import 'domain/provider/auth_provider.dart';
 import 'domain/provider/notification_provider.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -38,6 +41,7 @@ class MyApp extends StatelessWidget {
               primarySwatch: Colors.blue,
               fontFamily: GoogleFonts.poppins().fontFamily),
           initialRoute: '/root',
+          builder: EasyLoading.init(),
           getPages: [GetPage(name: '/root', page: () => RootPage())],
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,

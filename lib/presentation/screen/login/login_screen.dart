@@ -45,7 +45,6 @@ class _LoginScreenState extends State<LoginScreen> {
     node = FocusScope.of(context);
 
     return BlocListener<AuthBloc, AuthState>(
-        bloc: authBloc,
         listener: (context, state) {
           if (state is DoLoginSuccess) {
             EasyLoading.showSuccess("Success");
@@ -53,7 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
               indexPage: 0,
             ));
           } else if (state is DoLoginLoading) {
-            EasyLoading.show();
+            EasyLoading.show(status: "Loading...");
           } else if (state is DoLoginFailed) {
             EasyLoading.dismiss();
             Fluttertoast.showToast(

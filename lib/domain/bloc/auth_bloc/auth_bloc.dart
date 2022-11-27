@@ -78,20 +78,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(DoLoginLoading());
       try {
         var response = await _apiService.postLogin(event.email, event.password);
+        _tokenModel = TokenModel.fromJson(response!.data);
+
         if (response.statusCode == 200) {
-          _tokenModel = TokenModel.fromJson(response.data);
-          if (_tokenModel.success == false) {
-            emit(DoLoginFailed("Email atau password salah"));
-          } else {
-            _sharedPreferenceService.saveToken(_tokenModel.token!);
-            _tokenFirebase = await _firebaseService.getToken();
-            print("TOKEN FIREBASE $_tokenFirebase");
-            await _apiService.addTokenFirebase(
-                _tokenModel.token!, _tokenFirebase!);
-            emit(DoLoginSuccess());
-          }
+          _sharedPreferenceService.saveToken(_tokenModel.token!);
+          // _tokenFirebase = await _firebaseService.getToken();
+          // print("TOKEN FIREBASE $_tokenFirebase");
+          // await _apiService.addTokenFirebase(
+          //     _tokenModel.token!, _tokenFirebase!);
+          emit(DoLoginSuccess());
         } else {
-          emit(DoLoginFailed(""));
+          emit(DoLoginFailed(_tokenModel.message!));
         }
       } catch (e) {
         emit(DoLoginFailed(e.toString()));

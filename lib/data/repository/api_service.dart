@@ -12,7 +12,6 @@ class ApiService {
   String clusterName = "Bekasi";
   final JsonDecoder _decoder = new JsonDecoder();
   Dio _dio = Dio();
-  late Response response;
 
   Future<Response> getSitesNew(String token) async {
     print("TOKEN $token");
@@ -158,20 +157,20 @@ class ApiService {
     }
   }
 
-  Future<Response> postLogin(String email, String password) async {
+  Future<Response?> postLogin(String email, String password) async {
     try {
-      response = await _dio.post(BASE_URL + "/api/v1/login",
+      final response = await _dio.post(BASE_URL + "/api/v1/login",
           data: {"email": email, "password": password, "role": 1});
 
       return response;
-    } catch (e) {
-      throw e;
+    } on DioError catch (e) {
+      return e.response;
     }
   }
 
   Future<Response?> getAuthentication(String token) async {
     try {
-      response = await _dio.get(BASE_URL + "/api/v1/profile",
+      final response = await _dio.get(BASE_URL + "/api/v1/profile",
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
       return response;
@@ -186,7 +185,7 @@ class ApiService {
 
   Future<Response?> addTokenFirebase(String token, String tokenFirebase) async {
     try {
-      response = await _dio.post(BASE_URL + "/api/v1/addToken",
+      final response = await _dio.post(BASE_URL + "/api/v1/addToken",
           options: Options(headers: {"Authorization": "Bearer $token"}),
           data: {"token": tokenFirebase});
 
@@ -207,7 +206,7 @@ class ApiService {
           await MultipartFile.fromFile(data.path, filename: filename);
       FormData formData = FormData.fromMap({"photo": multipartFile});
 
-      response = await _dio.post(BASE_URL + "/api/v1/updatePhoto",
+      final response = await _dio.post(BASE_URL + "/api/v1/updatePhoto",
           options: Options(headers: {"Authorization": "Bearer $token"}),
           data: formData);
 
@@ -223,7 +222,7 @@ class ApiService {
 
   Future<Response?> getLogout(String token) async {
     try {
-      response = await _dio.post(BASE_URL + "/api/v1/logout",
+      final response = await _dio.post(BASE_URL + "/api/v1/logout",
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
       return response;
@@ -238,7 +237,8 @@ class ApiService {
 
   Future<Response?> postSignUp(dynamic data) async {
     try {
-      response = await _dio.post(BASE_URL + "/api/v1/register", data: data);
+      final response =
+          await _dio.post(BASE_URL + "/api/v1/register", data: data);
 
       return response;
     } on DioError catch (e) {
@@ -253,7 +253,7 @@ class ApiService {
   Future<Response?> updateUser(dynamic data, String token, int idUser) async {
     print("edit profil: " + data.toString());
     try {
-      response = await _dio.put(BASE_URL + "/api/v1/user/$idUser",
+      final response = await _dio.put(BASE_URL + "/api/v1/user/$idUser",
           data: data,
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
@@ -275,7 +275,7 @@ class ApiService {
       "old_password": oldPassword
     };
     try {
-      response = await _dio.put(BASE_URL + "/api/v1/updatePassword",
+      final response = await _dio.put(BASE_URL + "/api/v1/updatePassword",
           data: data,
           options: Options(headers: {"Authorization": "Bearer $token"}));
 
