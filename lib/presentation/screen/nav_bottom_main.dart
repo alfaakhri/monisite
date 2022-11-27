@@ -1,9 +1,7 @@
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_monisite/domain/provider/auth_provider.dart';
 import 'package:flutter_monisite/external/color_helpers.dart';
-import 'package:provider/provider.dart';
 import 'account/account_screen.dart' as account;
 import 'history/history_screen.dart' as history;
 import 'home/home_screen.dart' as home;
@@ -35,7 +33,7 @@ class _NavBottomMainState extends State<NavBottomMain>
 
   @override
   void initState() { 
-    Provider.of<AuthProvider>(context, listen: false).getToken();
+    // Provider.of<AuthProvider>(context, listen: false).getToken();
     super.initState();
     _page = widget.indexPage;
   }
