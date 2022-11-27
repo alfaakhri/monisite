@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_monisite/data/models/monitor/monitor_model.dart';
@@ -13,7 +12,6 @@ part 'site_event.dart';
 part 'site_state.dart';
 
 class SiteBloc extends Bloc<SiteEvent, SiteState> {
-  SiteBloc() : super(SiteInitial());
   ApiService _apiService = ApiService();
   SharedPreferenceService _sharedPreferenceService = SharedPreferenceService();
 
@@ -53,40 +51,39 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
     _token = token;
   }
 
-  Stream<SiteState> mapEventToState(
-    SiteEvent event,
-  ) async* {
-    if (event is GetSites) {
-      yield GetSitesLoading();
+  SiteBloc() : super(SiteInitial()) {
+    on<GetSites>((event, emit) async {
+      emit(GetSitesLoading());
       try {
         var tokenNew = await _sharedPreferenceService.getToken();
         if (tokenNew == null) {
-          yield SiteMustLogin();
+          emit(SiteMustLogin());
         } else {
           _token = tokenNew;
           var response = await _apiService.getSitesNew(_token);
           if (response.statusCode == 200) {
             _listSites = ListSitesModel.fromJson(response.data);
             if (_listSites.data?.length == 0) {
-              yield GetSitesEmpty();
+              emit(GetSitesEmpty());
             } else {
-              yield GetSitesSuccess(_listSites);
+              emit(GetSitesSuccess(_listSites));
             }
           } else if (response.statusCode == 401) {
-            yield SiteMustLogin();
+            emit(SiteMustLogin());
           } else {
-            yield GetSitesFailed("Failed get data sites");
+            emit(GetSitesFailed("Failed get data sites"));
           }
         }
       } catch (e) {
-        yield GetSitesFailed(e.toString());
+        emit(GetSitesFailed(e.toString()));
       }
-    } else if (event is GetSiteByID) {
-      yield GetSiteByIDLoading();
+    });
+    on<GetSiteByID>((event, emit) async {
+      emit(GetSiteByIDLoading());
       try {
         var tokenNew = await _sharedPreferenceService.getToken();
         if (tokenNew == null) {
-          yield SiteMustLogin();
+          emit(SiteMustLogin());
         } else {
           _token = tokenNew;
 
@@ -95,24 +92,25 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
             _dataMonitor = MonitorModel.fromJson(response.data);
             if (_dataMonitor.success ?? false) {
               checkStatus(_dataMonitor);
-              yield GetSiteByIDSuccess(_dataMonitor);
+              emit(GetSiteByIDSuccess(_dataMonitor));
             } else {
-              yield GetSiteByIDEmpty(_dataMonitor.message!);
+              emit(GetSiteByIDEmpty(_dataMonitor.message!));
             }
           } else {
-            yield GetSiteByIDFailed("Failed get data monitor");
+            emit(GetSiteByIDFailed("Failed get data monitor"));
           }
         }
       } catch (e) {
-        yield GetSiteByIDFailed(e.toString());
+        emit(GetSiteByIDFailed(e.toString()));
       }
-    } else if (event is GetSiteBySearch) {
-      yield GetSiteBySearchLoading();
+    });
+    on<GetSiteBySearch>((event, emit) async {
+      emit(GetSiteBySearchLoading());
 
       try {
         var tokenNew = await _sharedPreferenceService.getToken();
         if (tokenNew == null) {
-          yield SiteMustLogin();
+          emit(SiteMustLogin());
         } else {
           _token = tokenNew;
           var response =
@@ -120,23 +118,24 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           if (response!.statusCode == 200) {
             _sitesResultSearch = ListSitesModel.fromJson(response.data);
             if (_sitesResultSearch.data?.length == 0) {
-              yield GetSiteBySearchEmpty();
+              emit(GetSiteBySearchEmpty());
             } else {
-              yield GetSiteBySearchSuccess(_sitesResultSearch);
+              emit(GetSiteBySearchSuccess(_sitesResultSearch));
             }
           } else {
-            yield GetSiteBySearchFailed("Failed get data sites");
+            emit(GetSiteBySearchFailed("Failed get data sites"));
           }
         }
       } catch (e) {
-        yield GetSiteBySearchFailed(e.toString());
+        emit(GetSiteBySearchFailed(e.toString()));
       }
-    } else if (event is GetReportMonitor) {
-      yield GetReportMonitorLoading();
+    });
+    on<GetReportMonitor>((event, emit) async {
+      emit(GetReportMonitorLoading());
       try {
         var tokenNew = await _sharedPreferenceService.getToken();
         if (tokenNew == null) {
-          yield SiteMustLogin();
+          emit(SiteMustLogin());
         } else {
           _token = tokenNew;
           DateTime toDate = DateTime.parse(event.toDate);
@@ -149,18 +148,18 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
           if (response!.statusCode == 200) {
             _reportMonitor = ReportMonitorModel.fromJson(response.data);
             if (_reportMonitor.data!.length == 0) {
-              yield GetReportMonitorEmpty();
+              emit(GetReportMonitorEmpty());
             } else {
-              yield GetReportMonitorSuccess(_reportMonitor);
+              emit(GetReportMonitorSuccess(_reportMonitor));
             }
           } else {
-            yield GetReportMonitorFailed("Failed get data report");
+            emit(GetReportMonitorFailed("Failed get data report"));
           }
         }
       } catch (e) {
-        yield GetReportMonitorFailed(e.toString());
+        emit(GetReportMonitorFailed(e.toString()));
       }
-    }
+    });
   }
 
   void checkStatus(MonitorModel monitor) {
