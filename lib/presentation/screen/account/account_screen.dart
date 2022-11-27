@@ -104,9 +104,9 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is GetAuthSuccess) {
             var user = state.profileModel.user!;
             _nama.text = user.name!;
-            _telepon.text = user.phoneNumber!;
+            _telepon.text = "-";
             _email.text = user.email!;
-            _alamat.text = user.address!;
+            _alamat.text = "-";
 
             return _contentAccount(state.profileModel);
           } else if (state is GetAuthFailed) {
@@ -120,9 +120,9 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is EditProfileSuccess) {
             var user = state.profileModel.user!;
             _nama.text = user.name!;
-            _telepon.text = user.phoneNumber!;
+            _telepon.text = "-";
             _email.text = user.email!;
-            _alamat.text = user.address!;
+            _alamat.text = "-";
 
             return _contentAccount(state.profileModel);
           } else if (state is EditPhotoProfileLoading) {
@@ -130,16 +130,16 @@ class _AccountScreenState extends State<AccountScreen> {
           } else if (state is EditPhotoProfileSuccess) {
             var user = state.profileModel.user!;
             _nama.text = user.name!;
-            _telepon.text = user.phoneNumber!;
+            _telepon.text = "-";
             _email.text = user.email!;
-            _alamat.text = user.address!;
+            _alamat.text = "-";
             return _contentAccount(state.profileModel);
           } else if (state is EditPhotoProfileCancel) {
             var user = authBloc.profileModel.user!;
             _nama.text = user.name!;
-            _telepon.text = user.phoneNumber!;
+            _telepon.text = "-";
             _email.text = user.email!;
-            _alamat.text = user.address!;
+            _alamat.text = "-";
             return _contentAccount(authBloc.profileModel);
           } else if (state is EditPhotoProfileFailed) {
             return ErrorHandlingWidget(
@@ -165,8 +165,8 @@ class _AccountScreenState extends State<AccountScreen> {
               children: <Widget>[
                 ClipRRect(
                     borderRadius: BorderRadius.circular(50),
-                    child: Image.network(
-                      profile.user!.photoUrl!,
+                    child: Image.asset(
+                      "images/user.png",
                       fit: BoxFit.cover,
                       height: 100,
                       width: 100,
@@ -290,7 +290,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user!.phoneNumber!,
+                      "-",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
@@ -325,7 +325,7 @@ class _AccountScreenState extends State<AccountScreen> {
                       style: TextStyle(fontSize: 14, color: Colors.grey),
                     ),
                     subtitle: Text(
-                      profile.user!.address!,
+                      "-",
                       style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                   ),
