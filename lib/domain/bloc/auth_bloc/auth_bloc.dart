@@ -60,7 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             // await _apiService
             //     .addTokenFirebase(_token!, _tokenFirebase!)
             //     .then((value) {
-            //   _profileModel = ProfileModel.fromJson(response?.data);
+              _profileModel = ProfileModel.fromJson(response?.data);
             // });
             emit(GetAuthSuccess(_profileModel));
           } else if (response?.statusCode == 401) {
