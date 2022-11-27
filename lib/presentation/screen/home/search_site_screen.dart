@@ -121,7 +121,7 @@ class _SearchSiteScreenState extends State<SearchSiteScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  site.siteName,
+                                  site.siteName ?? "-",
                                 ),
                                 SizedBox(
                                   height: 10.0,
@@ -129,10 +129,10 @@ class _SearchSiteScreenState extends State<SearchSiteScreen> {
                                 Row(
                                   children: <Widget>[
                                     Text("Tenant OM: "),
-                                    Text(site.tenantOm),
+                                    Text(site.tenantOm ?? "-"),
                                   ],
                                 ),
-                                Text(site.address),
+                                Text(site.address ?? "-"),
                               ],
                             ),
                           ],
