@@ -163,33 +163,33 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
   }
 
   void checkStatus(MonitorModel monitor) {
-    if (double.parse(monitor.data!.teganganRs!) < 100.00 ||
-        double.parse(monitor.data!.teganganRs!) > 250.00) {
+    if (monitor.data!.teganganRs! < 100.00 ||
+        monitor.data!.teganganRs! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.teganganRt!) < 100.00 ||
-        double.parse(monitor.data!.teganganRt!) > 250.00) {
+    } else if (monitor.data!.teganganRt! < 100.00 ||
+        monitor.data!.teganganRt! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.teganganSt!) < 100.00 ||
-        double.parse(monitor.data!.teganganSt!) > 250.00) {
+    } else if (monitor.data!.teganganSt! < 100.00 ||
+        monitor.data!.teganganSt! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.teganganRn!) < 100.00 ||
-        double.parse(monitor.data!.teganganRn!) > 250.00) {
+    } else if (monitor.data!.teganganRn! < 100.00 ||
+        monitor.data!.teganganRn! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.teganganSn!) < 100.00 ||
-        double.parse(monitor.data!.teganganSn!) > 250.00) {
+    } else if (monitor.data!.teganganSn! < 100.00 ||
+        monitor.data!.teganganSn! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.teganganTn!) < 100.00 ||
-        double.parse(monitor.data!.teganganTn!) > 250.00) {
+    } else if (monitor.data!.teganganTn! < 100.00 ||
+        monitor.data!.teganganTn! > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.arusR!) < 0.00 ||
-        double.parse(monitor.data!.arusS!) < 0.00 ||
-        double.parse(monitor.data!.arusT!) < 0.00 ||
-        double.parse(monitor.data!.arusAc!) < 0.00) {
+    } else if (monitor.data!.arusR! < 0.00 ||
+        monitor.data!.arusS! < 0.00 ||
+        monitor.data!.arusT! < 0.00 ||
+        monitor.data!.arusAc! < 0.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.pressure!) < 80.00 ||
-        double.parse(monitor.data!.pressure!) > 140.00) {
+    } else if (monitor.data!.pressure! < 80.00 ||
+        monitor.data!.pressure! > 140.00) {
       setStatus("Perlu ditinjau");
-    } else if (double.parse(monitor.data!.temperature!) > 27.00) {
+    } else if (monitor.data!.temperature! > 27.00) {
       setStatus("Perlu ditinjau");
     } else {
       setStatus("Stabil");
