@@ -17,7 +17,10 @@ class ApiService {
     print("TOKEN $token");
     try {
       final response = await _dio.get(BASE_URL + "/api/v1/site",
-          options: Options(headers: {"Authorization": "Bearer $token"}));
+          options: Options(headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json"
+          }));
       return response;
     } on DioError catch (e) {
       if (e.response!.statusCode == 401) {
