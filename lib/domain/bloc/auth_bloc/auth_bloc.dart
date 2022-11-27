@@ -55,13 +55,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           var response = await _apiService.getAuthentication(_token!);
           if (response?.statusCode == 200) {
-            _tokenFirebase = await _firebaseService.getToken();
+            // _tokenFirebase = await _firebaseService.getToken();
             print("TOKEN FIREBASE $_tokenFirebase");
-            await _apiService
-                .addTokenFirebase(_token!, _tokenFirebase!)
-                .then((value) {
-              _profileModel = ProfileModel.fromJson(response?.data);
-            });
+            // await _apiService
+            //     .addTokenFirebase(_token!, _tokenFirebase!)
+            //     .then((value) {
+            //   _profileModel = ProfileModel.fromJson(response?.data);
+            // });
             emit(GetAuthSuccess(_profileModel));
           } else if (response?.statusCode == 401) {
             emit(GetAuthMustLogin());
