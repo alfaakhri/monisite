@@ -16,7 +16,7 @@ class MonitorModel {
     data['success'] = this.success;
     data['message'] = this.message;
     if (this.data != null) {
-      data['data'] = this.data?.toJson();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
@@ -27,18 +27,18 @@ class DataMonitor {
   int? siteId;
   int? alarmId;
   int? type;
-  String? teganganRs;
-  String? teganganRt;
-  String? teganganSt;
-  String? teganganRn;
-  String? teganganSn;
-  String? teganganTn;
-  String? arusR;
-  String? arusS;
-  String? arusT;
-  String? arusAc;
-  String? temperature;
-  String? pressure;
+  int? teganganRs;
+  int? teganganRt;
+  int? teganganSt;
+  int? teganganRn;
+  int? teganganSn;
+  int? teganganTn;
+  int? arusR;
+  int? arusS;
+  int? arusT;
+  int? arusAc;
+  int? temperature;
+  int? pressure;
   String? createdAt;
   String? code;
   String? siteName;
