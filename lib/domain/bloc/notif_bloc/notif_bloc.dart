@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_monisite/data/models/notification/notification_model.dart';
@@ -10,7 +9,6 @@ part 'notif_event.dart';
 part 'notif_state.dart';
 
 class NotifBloc extends Bloc<NotifEvent, NotifState> {
-  NotifBloc() : super(NotifInitial());
   SharedPreferenceService _sharedPref = SharedPreferenceService();
   ApiService _apiService = ApiService();
 
@@ -26,15 +24,13 @@ class NotifBloc extends Bloc<NotifEvent, NotifState> {
     _token = token;
   }
 
-  Stream<NotifState> mapEventToState(
-    NotifEvent event,
-  ) async* {
-    if (event is GetListNotif) {
-      yield GetListNotifLoading();
+  NotifBloc() : super(NotifInitial()) {
+    on<GetListNotif>((event, emit) async {
+      emit(GetListNotifLoading());
       try {
         var tokenNew = await _sharedPref.getToken();
         if (tokenNew == null) {
-          yield NotifMustLogin();
+          emit(NotifMustLogin());
         } else {
           _token = tokenNew;
 
@@ -43,57 +39,59 @@ class NotifBloc extends Bloc<NotifEvent, NotifState> {
             _notifModel = NotificationModel.fromJson(response?.data);
             _notifModel.data = _notifModel.data!.reversed.toList();
             if (_notifModel.success!) {
-              yield GetListNotifSuccess(_notifModel);
+              emit(GetListNotifSuccess(_notifModel));
             } else {
-              yield GetListNotifEmpty();
+              emit(GetListNotifEmpty());
             }
           } else {
-            yield GetListNotifFailed("Failed get data monitor");
+            emit(GetListNotifFailed("Failed get data monitor"));
           }
         }
       } catch (e) {
-        yield GetListNotifFailed(e.toString());
+        emit(GetListNotifFailed(e.toString()));
       }
-    } else if (event is PostAcceptNotif) {
-      yield PostAcceptNotifLoading();
+    });
+    on<PostAcceptNotif>((event, emit) async {
+      emit(PostAcceptNotifLoading());
       try {
         var tokenNew = await _sharedPref.getToken();
         if (tokenNew == null) {
-          yield NotifMustLogin();
+          emit(NotifMustLogin());
         } else {
           _token = tokenNew;
 
           var response =
               await _apiService.postAcceptNotif(event.notifId, _token);
           if (response?.statusCode == 200) {
-            yield PostAcceptNotifSuccess();
+            emit(PostAcceptNotifSuccess());
           } else {
-            yield PostAcceptNotifFailed("Failed post fixing notif");
+            emit(PostAcceptNotifFailed("Failed post fixing notif"));
           }
         }
       } catch (e) {
-        yield PostAcceptNotifFailed(e.toString());
+        emit(PostAcceptNotifFailed(e.toString()));
       }
-    } else if (event is PostHistoryProcess) {
-      yield PostHistoryProcessLoading();
+    });
+    on<PostHistoryProcess>((event, emit) async {
+      emit(PostHistoryProcessLoading());
       try {
         var tokenNew = await _sharedPref.getToken();
         if (tokenNew == null) {
-          yield NotifMustLogin();
+          emit(NotifMustLogin());
         } else {
           _token = tokenNew;
 
-          var response =
-              await _apiService.postHistoryProcess(event.notifId, event.status, _token);
+          var response = await _apiService.postHistoryProcess(
+              event.notifId, event.status, _token);
           if (response?.statusCode == 200) {
-            yield PostHistoryProcessSuccess(event.status);
+            emit(PostHistoryProcessSuccess(event.status));
           } else {
-            yield PostHistoryProcessFailed("Failed post fixing notif");
+            emit(PostHistoryProcessFailed("Failed post fixing notif"));
           }
         }
       } catch (e) {
-        yield PostHistoryProcessFailed(e.toString());
+        emit(PostHistoryProcessFailed(e.toString()));
       }
-    }
+    });
   }
 }
