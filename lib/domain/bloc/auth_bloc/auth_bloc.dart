@@ -16,7 +16,6 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(AuthInitial());
   SharedPreferenceService _sharedPreferenceService = SharedPreferenceService();
   ApiService _apiService = ApiService();
   FirebaseService _firebaseService = FirebaseService();
@@ -45,17 +44,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     _profileModel = profileModel;
   }
 
-  Stream<AuthState> mapEventToState(
-    AuthEvent event,
-  ) async* {
-    if (event is GetAuthentication) {
-      yield GetAuthLoading();
-
+  AuthBloc() : super(AuthInitial()) {
+    on<GetAuthentication>((event, emit) async {
+      emit(GetAuthLoading());
       try {
         _token = await _sharedPreferenceService.getToken();
         print("TOKEN $_token");
         if (_token == null) {
-          yield GetAuthFailed("Login terlebih dahulu");
+          emit(GetAuthFailed("Login terlebih dahulu"));
         } else {
           var response = await _apiService.getAuthentication(_token!);
           if (response?.statusCode == 200) {
@@ -66,50 +62,50 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
                 .then((value) {
               _profileModel = ProfileModel.fromJson(response?.data);
             });
-            yield GetAuthSuccess(_profileModel);
+            emit(GetAuthSuccess(_profileModel));
           } else if (response?.statusCode == 401) {
-            yield GetAuthMustLogin();
+            emit(GetAuthMustLogin());
           } else {
-            yield GetAuthFailed("Login terlebih dahulu");
+            emit(GetAuthFailed("Login terlebih dahulu"));
           }
         }
       } catch (error) {
         print("GetAuthFailed: " + error.toString());
-        yield GetAuthFailed(error.toString());
+        emit(GetAuthFailed(error.toString()));
       }
-    } else if (event is DoLogin) {
-      yield DoLoginLoading();
+    });
+    on<DoLogin>((event, emit) async {
+      emit(DoLoginLoading());
       try {
         var response = await _apiService.postLogin(event.email, event.password);
+        _tokenModel = TokenModel.fromJson(response!.data);
+
         if (response.statusCode == 200) {
-          _tokenModel = TokenModel.fromJson(response.data);
-          if (_tokenModel.success == false) {
-            yield DoLoginFailed("Email atau password salah");
-          } else {
-            _sharedPreferenceService.saveToken(_tokenModel.token!);
-            _tokenFirebase = await _firebaseService.getToken();
-            print("TOKEN FIREBASE $_tokenFirebase");
-            await _apiService.addTokenFirebase(
-                _tokenModel.token!, _tokenFirebase!);
-            yield DoLoginSuccess();
-          }
+          _sharedPreferenceService.saveToken(_tokenModel.token!);
+          // _tokenFirebase = await _firebaseService.getToken();
+          // print("TOKEN FIREBASE $_tokenFirebase");
+          // await _apiService.addTokenFirebase(
+          //     _tokenModel.token!, _tokenFirebase!);
+          emit(DoLoginSuccess());
         } else {
-          yield DoLoginFailed("");
+          emit(DoLoginFailed(_tokenModel.message!));
         }
       } catch (e) {
-        yield DoLoginFailed(e.toString());
+        emit(DoLoginFailed(e.toString()));
       }
-    } else if (event is DoLogout) {
+    });
+    on<DoLogout>((event, emit) async {
       var response = await _apiService.getLogout(token);
       if (response?.statusCode == 200) {
         _sharedPreferenceService.deleteTokenModel();
         _token = null;
-        yield DoLogoutSuccess();
+        emit(DoLogoutSuccess());
       } else {
-        yield DoLogoutFailed();
+        emit(DoLogoutFailed());
       }
-    } else if (event is PostSignup) {
-      yield PostSignupLoading();
+    });
+    on<PostSignup>((event, emit) async {
+      emit(PostSignupLoading());
 
       try {
         var data = RegistrationModel(
@@ -130,21 +126,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           print("TOKEN FIREBASE $_tokenFirebase");
           await _apiService.addTokenFirebase(
               registration.token!, _tokenFirebase!);
-          yield PostSignupSuccess();
+          emit(PostSignupSuccess());
         } else if (response?.statusCode == 422) {
           RegistrationResponse registration =
               RegistrationResponse.fromJson(response?.data);
-          yield PostSignupFailed(registration.email!.first);
+          emit(PostSignupFailed(registration.email!.first));
         } else {
-          yield PostSignupFailed("Something wrong, please try again.");
+          emit(PostSignupFailed("Something wrong, please try again."));
         }
       } catch (e) {
-        yield PostSignupFailed(e.toString());
+        emit(PostSignupFailed(e.toString()));
       }
-    } else if (event is StartApp) {
-      yield* _startAppToState();
-    } else if (event is EditProfile) {
-      yield EditProfileLoading();
+    });
+    on<StartApp>((event, emit) {
+      emit(GetAuthLoading());
+      Timer(Duration(seconds: 2), () {
+        add(GetAuthentication());
+      });
+    });
+    on<EditProfile>((event, emit) async {
+      emit(EditProfileLoading());
 
       try {
         var data = {
@@ -161,25 +162,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             if (response?.statusCode == 200) {
               _tokenFirebase = await _firebaseService.getToken();
               print("TOKEN FIREBASE $_tokenFirebase");
-              
-                  await _apiService.addTokenFirebase(_token!, _tokenFirebase!);
+
+              await _apiService.addTokenFirebase(_token!, _tokenFirebase!);
               _profileModel = ProfileModel.fromJson(response?.data);
-              yield EditProfileSuccess(_profileModel);
+              emit(EditProfileSuccess(_profileModel));
             } else if (response?.statusCode == 401) {
-              yield GetAuthMustLogin();
+              emit(GetAuthMustLogin());
             } else {
-              yield GetAuthFailed("Login terlebih dahulu");
+              emit(GetAuthFailed("Login terlebih dahulu"));
             }
           } else {
-            yield EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)");
+            emit(EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)"));
           }
         } else {
-          yield EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)");
+          emit(EditProfileFailed("Ada sesuatu yang salah. Coba lagi :)"));
         }
       } catch (e) {
-        yield EditProfileFailed(e.toString());
+        emit(EditProfileFailed(e.toString()));
       }
-    } else if (event is EditPhotoProfile) {
+    });
+    on<EditPhotoProfile>((event, emit) async {
       // File? image =
       //     await ImagePickerService().dialogImageEditProfil(event.context);
 
@@ -211,12 +213,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // } else {
       //   yield EditPhotoProfileCancel();
       // }
-    } else if (event is ChangePassword) {
-      yield ChangePasswordLoading();
+    });
+    on<ChangePassword>((event, emit) async {
+      emit(ChangePasswordLoading());
       try {
         var tokenNew = await _sharedPreferenceService.getToken();
         if (tokenNew == null) {
-          yield GetAuthMustLogin();
+          emit(GetAuthMustLogin());
         } else {
           _token = tokenNew;
           var response = await _apiService.updatePassword(
@@ -225,24 +228,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ResponseUpdatePassword responseUpdate = ResponseUpdatePassword();
             responseUpdate = ResponseUpdatePassword.fromJson(response?.data);
             if (responseUpdate.success ?? false) {
-              yield ChangePasswordMatch(responseUpdate);
+              emit(ChangePasswordMatch(responseUpdate));
             } else
-              yield ChangePasswordNotMatch(responseUpdate);
+              emit(ChangePasswordNotMatch(responseUpdate));
           } else {
-            yield ChangePasswordFailed(
-                "Something wrong update password, try again");
+            emit(ChangePasswordFailed(
+                "Something wrong update password, try again"));
           }
         }
       } catch (e) {
-        yield ChangePasswordFailed(e.toString());
+        emit(ChangePasswordFailed(e.toString()));
       }
-    }
-  }
-
-  Stream<AuthState> _startAppToState() async* {
-    yield GetAuthLoading();
-    Timer(Duration(seconds: 2), () {
-      add(GetAuthentication());
     });
   }
 }
