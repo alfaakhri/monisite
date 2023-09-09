@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_monisite/data/models/face_detection/face_detection_model.dart';
+import 'package:flutter_monisite/external/date_format_extension.dart';
+import 'package:get/get.dart';
 
 import '../../../../external/ui_helpers.dart';
 import '../../../shared/cached_image.dart';
@@ -34,7 +36,7 @@ class DataFaceDetectionWidget extends StatelessWidget {
                       children: <Widget>[
                         Icon(Icons.person, color: Colors.blue, size: 22),
                         UIHelper.horizontalSpaceVerySmall,
-                        Text("Name: ${data?.name ?? "-"}"),
+                        Text("Name: ${data?.name?.capitalizeFirst ?? "-"}"),
                       ],
                     ),
                     UIHelper.verticalSpaceVerySmall,
@@ -49,7 +51,7 @@ class DataFaceDetectionWidget extends StatelessWidget {
                         UIHelper.horizontalSpaceVerySmall,
                         Expanded(
                             child: Text(
-                          "Jumat, 18 Agustus 2023. 21:00",
+                          "${DateTime.parse(data!.createdAt!).dayddMMMMyyyy()}. ${DateTime.parse(data!.createdAt!).hhmm()}",
                           maxLines: 2,
                         )),
                       ],
