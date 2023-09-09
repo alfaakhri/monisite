@@ -1,7 +1,12 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
+<<<<<<< Updated upstream
 export "FLUTTER_ROOT=/Users/gitsindonesia/Documents/development/flutter"
 export "FLUTTER_APPLICATION_PATH=/Users/gitsindonesia/Documents/Said/monisite"
+=======
+export "FLUTTER_ROOT=c:\flutter"
+export "FLUTTER_APPLICATION_PATH=D:\said\monisite"
+>>>>>>> Stashed changes
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"

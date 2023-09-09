@@ -1,7 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
+import 'package:flutter_monisite/domain/bloc/rfid_bloc/rfid_bloc.dart';
+import 'package:flutter_monisite/domain/bloc/face_detection_bloc/face_detection_bloc.dart';
+
 import 'package:flutter_monisite/presentation/screen/root_page.dart';
 import 'package:get/route_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,8 +18,19 @@ import 'domain/bloc/notif_bloc/notif_bloc.dart';
 import 'domain/bloc/site_bloc/site_bloc.dart';
 import 'domain/provider/auth_provider.dart';
 import 'domain/provider/notification_provider.dart';
+import 'external/notification_helper.dart';
 
-void main() {
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  await NotificationHelper().setupFlutterNotifications();
+  NotificationHelper().showNotificationFromFCM(message);
+}
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
@@ -34,6 +50,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<SiteBloc>(create: (context) => SiteBloc()),
           BlocProvider<NotifBloc>(create: (context) => NotifBloc()),
           BlocProvider<ListReportBloc>(create: (context) => ListReportBloc()),
+          BlocProvider<FaceDetectionBloc>(
+              create: (context) => FaceDetectionBloc()),
+          BlocProvider<RfidBloc>(create: (context) => RfidBloc()),
         ],
         child: GetMaterialApp(
           debugShowCheckedModeBanner: false,
