@@ -118,12 +118,27 @@ class ApiService {
     }
   }
 
-  Future<Response?> getFaceDetection(int siteId, 
-      String token, int limit) async {
+  Future<Response?> getFaceDetection(
+      int siteId, String token, int limit) async {
     try {
       final response = await _dio.get(
-          BASE_URL +
-              "/api/v1/face?site_id=$siteId&limit=$limit",
+          BASE_URL + "/api/v1/face?site_id=$siteId&limit=$limit",
+          options: Options(headers: {"Authorization": "Bearer $token"}));
+      return response;
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        return e.response;
+      } else {
+        throw e;
+      }
+    }
+  }
+
+  Future<Response?> getRfidDetection(
+      int siteId, String token, int limit) async {
+    try {
+      final response = await _dio.get(
+          BASE_URL + "/api/v1/rfid?site_id=$siteId",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
