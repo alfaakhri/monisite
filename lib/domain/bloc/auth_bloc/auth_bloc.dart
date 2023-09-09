@@ -55,13 +55,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } else {
           var response = await _apiService.getAuthentication(_token!);
           if (response?.statusCode == 200) {
-            // _tokenFirebase = await _firebaseService.getToken();
+            _tokenFirebase = await _firebaseService.getToken();
             print("TOKEN FIREBASE $_tokenFirebase");
-            // await _apiService
-            //     .addTokenFirebase(_token!, _tokenFirebase!)
-            //     .then((value) {
+            await _apiService
+                .addTokenFirebase(_token!, _tokenFirebase!)
+                .then((value) {
               _profileModel = ProfileModel.fromJson(response?.data);
-            // });
+            });
             emit(GetAuthSuccess(_profileModel));
           } else if (response?.statusCode == 401) {
             emit(GetAuthMustLogin());
@@ -82,10 +82,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         if (response.statusCode == 200) {
           _sharedPreferenceService.saveToken(_tokenModel.token!);
-          // _tokenFirebase = await _firebaseService.getToken();
-          // print("TOKEN FIREBASE $_tokenFirebase");
-          // await _apiService.addTokenFirebase(
-          //     _tokenModel.token!, _tokenFirebase!);
+          _tokenFirebase = await _firebaseService.getToken();
+          print("TOKEN FIREBASE $_tokenFirebase");
+          await _apiService.addTokenFirebase(
+              _tokenModel.token!, _tokenFirebase!);
           emit(DoLoginSuccess());
         } else {
           emit(DoLoginFailed(_tokenModel.message!));
