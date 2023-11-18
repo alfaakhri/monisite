@@ -5,20 +5,20 @@ abstract class RfidState {}
 
 class RfidInitial extends RfidState {}
 
-class GetRfidDetectionLoading extends RfidState {}
+class GetRfidMasterEmpty extends RfidState {}
 
-class GetRfidDetectionSuccess extends RfidState {
-  final RfidDetectionModel rfidDetectionModel;
+class GetRfidMasterLoading extends RfidState {}
 
-  GetRfidDetectionSuccess(this.rfidDetectionModel);
+class GetRfidMasterSuccess extends RfidState {
+  final RFIDMasterModel rfidMasterModel;
+
+  GetRfidMasterSuccess(this.rfidMasterModel);
 }
 
-class GetRfidDetectionEmpty extends RfidState {}
-
-class GetRfidDetectionFailed extends RfidState {
+class GetRfidMasterFailed extends RfidState {
   final String message;
 
-  GetRfidDetectionFailed(this.message);
+  GetRfidMasterFailed(this.message);
 }
 
 class SiteMustLogin extends RfidState {}

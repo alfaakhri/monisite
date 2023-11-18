@@ -6,6 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_monisite/domain/bloc/auth_bloc/auth_bloc.dart';
 import 'package:flutter_monisite/domain/bloc/rfid_bloc/rfid_bloc.dart';
 import 'package:flutter_monisite/domain/bloc/face_detection_bloc/face_detection_bloc.dart';
+import 'package:flutter_monisite/domain/provider/rfid_provider.dart';
 
 import 'package:flutter_monisite/presentation/screen/root_page.dart';
 import 'package:get/route_manager.dart';
@@ -13,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
+import 'domain/bloc/detail_rfid_bloc/detail_rfid_bloc.dart';
 import 'domain/bloc/list_report_bloc/list_report_bloc.dart';
 import 'domain/bloc/notif_bloc/notif_bloc.dart';
 import 'domain/bloc/site_bloc/site_bloc.dart';
@@ -43,6 +45,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => NotificationProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => RFIDProvider(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -52,6 +57,7 @@ class MyApp extends StatelessWidget {
           BlocProvider<ListReportBloc>(create: (context) => ListReportBloc()),
           BlocProvider<FaceDetectionBloc>(
               create: (context) => FaceDetectionBloc()),
+          BlocProvider<DetailRfidBloc>(create: (context) => DetailRfidBloc()),
           BlocProvider<RfidBloc>(create: (context) => RfidBloc()),
         ],
         child: GetMaterialApp(

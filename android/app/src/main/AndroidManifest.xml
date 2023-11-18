@@ -15,7 +15,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="${applicationName}"
-        android:label="Monisite"
+        android:label="toraga-X"
         android:icon="@mipmap/launcher_icon"
         android:requestLegacyExternalStorage="true">
         <activity

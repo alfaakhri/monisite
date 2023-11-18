@@ -1,6 +1,6 @@
-class RfidDetectionModel {
+class RFIDMasterModel {
   int? currentPage;
-  List<DataRfid>? data;
+  List<DataRFIDMaster>? data;
   String? firstPageUrl;
   int? from;
   String? nextPageUrl;
@@ -9,7 +9,7 @@ class RfidDetectionModel {
   String? prevPageUrl;
   int? to;
 
-  RfidDetectionModel(
+  RFIDMasterModel(
       {this.currentPage,
       this.data,
       this.firstPageUrl,
@@ -20,12 +20,12 @@ class RfidDetectionModel {
       this.prevPageUrl,
       this.to});
 
-  RfidDetectionModel.fromJson(Map<String, dynamic> json) {
+  RFIDMasterModel.fromJson(Map<String, dynamic> json) {
     currentPage = json['current_page'];
     if (json['data'] != null) {
-      data = <DataRfid>[];
+      data = <DataRFIDMaster>[];
       json['data'].forEach((v) {
-        data!.add(new DataRfid.fromJson(v));
+        data!.add(new DataRFIDMaster.fromJson(v));
       });
     }
     firstPageUrl = json['first_page_url'];
@@ -54,47 +54,29 @@ class RfidDetectionModel {
   }
 }
 
-class DataRfid {
+class DataRFIDMaster {
   int? id;
-  String? readerCode;
-  int? userId;
-  int? siteId;
   String? name;
-  String? recordTime;
-  String? createdAt;
-  String? updatedAt;
+  bool? status;
 
-  DataRfid(
-      {this.id,
-      this.readerCode,
-      this.userId,
-      this.siteId,
-      this.name,
-      this.recordTime,
-      this.createdAt,
-      this.updatedAt});
+  DataRFIDMaster({
+    this.id,
+    this.name,
+    this.status,
+  });
 
-  DataRfid.fromJson(Map<String, dynamic> json) {
+  DataRFIDMaster.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    readerCode = json['reader_code'];
-    userId = json['user_id'];
-    siteId = json['site_id'];
     name = json['name'];
-    recordTime = json['record_time'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
-    data['reader_code'] = this.readerCode;
-    data['user_id'] = this.userId;
-    data['site_id'] = this.siteId;
     data['name'] = this.name;
-    data['record_time'] = this.recordTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    data['status'] = this.status;
+
     return data;
   }
 }

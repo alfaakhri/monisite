@@ -21,8 +21,8 @@ class SplashScreen extends StatelessWidget {
                       child: Image.asset('images/tower.png', scale: 7)),
                   UIHelper.verticalSpaceMedium,
                   Hero(
-                    tag: 'Monisite',
-                    child: Text('Monisite',
+                    tag: 'toraga-X',
+                    child: Text('toraga-X',
                         style:
                             TextStyle(fontSize: 26, color: Colors.blueAccent)),
                   ),

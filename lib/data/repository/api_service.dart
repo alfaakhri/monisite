@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:uuid/uuid.dart';
 
-const BASE_URL = "https://monisite.errltd.xyz";
+const BASE_URL = "https://toraga.errltd.xyz";
 
 class ApiService {
   String clusterName = "Bekasi";
@@ -135,10 +135,9 @@ class ApiService {
   }
 
   Future<Response?> getRfidDetection(
-      int siteId, String token, int limit) async {
+      int siteId, String token, int id) async {
     try {
-      final response = await _dio.get(
-          BASE_URL + "/api/v1/rfid?site_id=$siteId",
+      final response = await _dio.get(BASE_URL + "/api/v1/master_rfid?id=$id&site_id=$siteId",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
@@ -150,12 +149,10 @@ class ApiService {
     }
   }
 
-   Future<Response?> getRfidDetection(int siteId, 
-      String token, int limit) async {
+  Future<Response?> getRfidMaster(
+      int siteId, String token) async {
     try {
-      final response = await _dio.get(
-          BASE_URL +
-              "/api/v1/rfid?site_id=$siteId&limit=$limit",
+      final response = await _dio.get(BASE_URL + "/api/v1/master_rfid?site_id=2=$siteId",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
@@ -215,7 +212,7 @@ class ApiService {
   Future<Response?> postLogin(String email, String password) async {
     try {
       final response = await _dio.post(BASE_URL + "/api/v1/login",
-          data: {"email": email, "password": password, "role": 1});
+          data: {"email": email, "password": password});
 
       return response;
     } on DioError catch (e) {

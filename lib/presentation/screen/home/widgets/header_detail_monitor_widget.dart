@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_monisite/presentation/screen/face_detection/list_face_detection_screen.dart';
 import 'package:flutter_monisite/presentation/screen/home/widgets/icon_text_menu_widget.dart';
-import 'package:flutter_monisite/presentation/screen/rfid_detection/list_data_rfid_screen.dart';
+import 'package:flutter_monisite/presentation/screen/rfid_detection/list_rfid_master_screen.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -73,7 +73,7 @@ class HeaderDetailMonitorWidget extends StatelessWidget {
                       UIHelper.horizontalSpaceVerySmall,
                       Container(
                           child: Text(
-                              "Waktu Terbaru: ${DateFormat("dd MMM yyyy HH:mm:ss").format(DateTime.parse(monitor.data!.createdAt!))}",
+                              "Waktu Terbaru: ${DateFormat("dd MMM yyyy HH:mm:ss").format(DateTime.parse(monitor.data!.createdAt!).toLocal())}",
                               style: TextStyle(color: Colors.white))),
                     ],
                   ),
@@ -139,7 +139,7 @@ class HeaderDetailMonitorWidget extends StatelessWidget {
                           title: "Maps"),
                       IconTextMenuWidget(
                           onTap: () {
-                            Get.to(ListDataRfidScreen(siteId: monitor.data?.siteId ?? 0,));
+                            Get.to(ListRFIDMasterScreen(siteId: monitor.data?.siteId ?? 0,));
                           },
                           icon: Icons.edgesensor_high,
                           title: "RFID"),
