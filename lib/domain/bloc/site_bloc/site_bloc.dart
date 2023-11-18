@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter_monisite/data/models/monitor/monitor_model.dart';
 import 'package:flutter_monisite/data/models/monitor/report_monitor_model.dart';
@@ -163,33 +162,33 @@ class SiteBloc extends Bloc<SiteEvent, SiteState> {
   }
 
   void checkStatus(MonitorModel monitor) {
-    if (monitor.data!.teganganRs! < 100.00 ||
-        monitor.data!.teganganRs! > 250.00) {
+    if (double.parse(monitor.data?.teganganRs ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganRs ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.teganganRt! < 100.00 ||
-        monitor.data!.teganganRt! > 250.00) {
+    } else if (double.parse(monitor.data?.teganganRt ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganRt ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.teganganSt! < 100.00 ||
-        monitor.data!.teganganSt! > 250.00) {
+    } else if (double.parse(monitor.data?.teganganSt ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganSt ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.teganganRn! < 100.00 ||
-        monitor.data!.teganganRn! > 250.00) {
+    } else if (double.parse(monitor.data?.teganganRn ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganRn ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.teganganSn! < 100.00 ||
-        monitor.data!.teganganSn! > 250.00) {
+    } else if (double.parse(monitor.data?.teganganSn ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganSn ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.teganganTn! < 100.00 ||
-        monitor.data!.teganganTn! > 250.00) {
+    } else if (double.parse(monitor.data?.teganganTn ?? "0") < 100.00 ||
+        double.parse(monitor.data?.teganganTn ?? "0") > 250.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.arusR! < 0.00 ||
-        monitor.data!.arusS! < 0.00 ||
-        monitor.data!.arusT! < 0.00 ||
-        monitor.data!.arusAc! < 0.00) {
+    } else if (double.parse(monitor.data?.arusR ?? "0") < 0.00 ||
+        double.parse(monitor.data?.arusS ?? "0") < 0.00 ||
+        double.parse(monitor.data?.arusT ?? "0") < 0.00 ||
+        double.parse(monitor.data?.arusAc ?? "0") < 0.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.pressure! < 80.00 ||
-        monitor.data!.pressure! > 140.00) {
+    } else if (double.parse(monitor.data?.pressure ?? "0") < 80.00 ||
+        double.parse(monitor.data?.pressure ?? "0") > 140.00) {
       setStatus("Perlu ditinjau");
-    } else if (monitor.data!.temperature! > 27.00) {
+    } else if ( double.parse(monitor.data?.temperature ?? "0") > 27.00) {
       setStatus("Perlu ditinjau");
     } else {
       setStatus("Stabil");
