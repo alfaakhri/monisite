@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 
@@ -12,10 +14,10 @@ class DetailRfidBloc extends Bloc<DetailRfidEvent, DetailRfidState> {
   ApiService _apiService = ApiService();
   SharedPreferenceService _sharedPreferenceService = SharedPreferenceService();
 
-  DetailRecordRFIDModel _rfidModel = DetailRecordRFIDModel();
-  DetailRecordRFIDModel get rfidModel => _rfidModel;
-  void setDetailRecord(List<RecordsRFID> data) {
-    _rfidModel.data?.records?.addAll(data);
+  List<RFIDRecordModel> _rfidModel = [];
+  List<RFIDRecordModel> get rfidModel => _rfidModel;
+  void setDetailRecord(List<RFIDRecordModel> data) {
+    _rfidModel.addAll(data);
   }
 
   String _token = "";
@@ -36,15 +38,18 @@ class DetailRfidBloc extends Bloc<DetailRfidEvent, DetailRfidState> {
             _token = tokenNew;
 
             var response = await _apiService.getRfidDetection(
-                event.siteId, _token, event.id);
+                event.siteId, _token, event.code);
+
             if (response?.statusCode == 200) {
-              DetailRecordRFIDModel tempList =
-                  DetailRecordRFIDModel.fromJson(response?.data);
-              if (tempList.data?.records?.length == 0) {
+
+              List<RFIDRecordModel>? rfidList = List.from(
+              (response?.data as List).map((e) => RFIDRecordModel.fromJson(e)));
+
+              if (rfidList.length == 0) {
                 emit(GetRfidDetectionEmpty());
               } else {
-                _rfidModel = tempList;
-                emit(GetRfidDetectionSuccess(_rfidModel));
+                _rfidModel = rfidList;
+                emit(GetRfidDetectionSuccess(rfidList));
               }
             } else {
               emit(GetRfidDetectionFailed("Failed get data report"));

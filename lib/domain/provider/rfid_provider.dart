@@ -15,9 +15,9 @@ class RFIDProvider extends ChangeNotifier {
     _dataRFIDMaster = data;
   }
 
-  List<RecordsRFID> _listRecordsRFID = [];
-  List<RecordsRFID> get listRecordsRFID => _listRecordsRFID;
-  setListRecordRFID(List<RecordsRFID> data) {
+  List<RFIDRecordModel> _listRecordsRFID = [];
+  List<RFIDRecordModel> get listRecordsRFID => _listRecordsRFID;
+  setListRecordRFID(List<RFIDRecordModel> data) {
     _listRecordsRFID.clear();
     _listRecordsRFID = data;
   }

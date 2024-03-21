@@ -56,27 +56,41 @@ class RFIDMasterModel {
 
 class DataRFIDMaster {
   int? id;
+  String? code;
   String? name;
+  int? siteId;
+  String? createdAt;
+  String? updatedAt;
   bool? status;
 
-  DataRFIDMaster({
-    this.id,
-    this.name,
-    this.status,
-  });
+  DataRFIDMaster(
+      {this.id,
+      this.code,
+      this.name,
+      this.siteId,
+      this.createdAt,
+      this.updatedAt,
+      this.status});
 
   DataRFIDMaster.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    code = json['code'];
     name = json['name'];
+    siteId = json['site_id'];
+    createdAt = json['created_at'];
+    updatedAt = json['updated_at'];
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['code'] = this.code;
     data['name'] = this.name;
+    data['site_id'] = this.siteId;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
     data['status'] = this.status;
-
     return data;
   }
 }

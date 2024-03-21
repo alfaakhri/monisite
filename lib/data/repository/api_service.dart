@@ -135,9 +135,9 @@ class ApiService {
   }
 
   Future<Response?> getRfidDetection(
-      int siteId, String token, int id) async {
+      int siteId, String token, String code) async {
     try {
-      final response = await _dio.get(BASE_URL + "/api/v1/master_rfid?id=$id&site_id=$siteId",
+      final response = await _dio.get(BASE_URL + "/api/v1/rfid_record?code=$code",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {
@@ -152,7 +152,7 @@ class ApiService {
   Future<Response?> getRfidMaster(
       int siteId, String token) async {
     try {
-      final response = await _dio.get(BASE_URL + "/api/v1/master_rfid?site_id=2=$siteId",
+      final response = await _dio.get(BASE_URL + "/api/v1/rfid?site_id=$siteId",
           options: Options(headers: {"Authorization": "Bearer $token"}));
       return response;
     } on DioError catch (e) {

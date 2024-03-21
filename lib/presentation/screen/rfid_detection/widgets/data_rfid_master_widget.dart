@@ -44,7 +44,7 @@ class _DataRFIDMasterWidgetState extends State<DataRFIDMasterWidget> {
                           children: <Widget>[
                             Icon(Icons.memory, color: Colors.blue, size: 22),
                             UIHelper.horizontalSpaceVerySmall,
-                            Text("RFID Code: ${widget.dataRfid.id ?? "-"}"),
+                            Text("RFID Code: ${widget.dataRfid.code ?? "-"}"),
                           ],
                         ),
                         UIHelper.verticalSpaceSmall,
@@ -109,7 +109,7 @@ class _DataRFIDMasterWidgetState extends State<DataRFIDMasterWidget> {
                                 builder: (context) {
                                   return ListDetailRecordRFID(
                                       siteId: widget.siteId,
-                                      idRfid: widget.dataRfid.id!);
+                                      codeRfid: widget.dataRfid.code ?? "");
                                 });
                           },
                           child: Text("Record Time"))),

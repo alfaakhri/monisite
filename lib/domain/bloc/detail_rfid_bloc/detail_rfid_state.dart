@@ -8,7 +8,7 @@ class DetailRfidInitial extends DetailRfidState {}
 class GetRfidDetectionLoading extends DetailRfidState {}
 
 class GetRfidDetectionSuccess extends DetailRfidState {
-  final DetailRecordRFIDModel rfidDetectionModel;
+  final List<RFIDRecordModel> rfidDetectionModel;
 
   GetRfidDetectionSuccess(this.rfidDetectionModel);
 }

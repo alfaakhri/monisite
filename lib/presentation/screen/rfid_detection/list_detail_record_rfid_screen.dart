@@ -10,9 +10,9 @@ import '../../../external/ui_helpers.dart';
 
 class ListDetailRecordRFID extends StatefulWidget {
   final int siteId;
-  final int idRfid;
+  final String codeRfid;
   const ListDetailRecordRFID(
-      {super.key, required this.siteId, required this.idRfid});
+      {super.key, required this.siteId, required this.codeRfid});
 
   @override
   State<ListDetailRecordRFID> createState() => _ListDetailRecordRFIDState();
@@ -25,7 +25,7 @@ class _ListDetailRecordRFIDState extends State<ListDetailRecordRFID> {
   void initState() {
     super.initState();
     faceBloc = BlocProvider.of<DetailRfidBloc>(context);
-    faceBloc.add(GetListRfidDetection(widget.siteId, widget.idRfid));
+    faceBloc.add(GetListRfidDetection(widget.siteId, widget.codeRfid));
   }
 
   @override
@@ -37,13 +37,13 @@ class _ListDetailRecordRFIDState extends State<ListDetailRecordRFID> {
       } else if (state is GetRfidDetectionSuccess) {
         context
             .read<RFIDProvider>()
-            .setListRecordRFID(state.rfidDetectionModel.data?.records ?? []);
+            .setListRecordRFID(state.rfidDetectionModel);
       }
     }, builder: (context, state) {
       if (state is GetRfidDetectionLoading) {
         return DataDetailRecordShimmer();
       } else if (state is GetRfidDetectionSuccess) {
-        var data = state.rfidDetectionModel.data?.records ?? [];
+        var data = state.rfidDetectionModel;
         return Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

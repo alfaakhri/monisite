@@ -5,9 +5,9 @@ abstract class DetailRfidEvent {}
 
 class GetListRfidDetection extends DetailRfidEvent {
   final int siteId;
-  final int id;
+  final String code;
 
-  GetListRfidDetection(this.siteId, this.id);
+  GetListRfidDetection(this.siteId, this.code);
 }
 
 class GetRfidMaster extends DetailRfidEvent {
